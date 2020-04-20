@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = 'users.Users'
+
 
 # Application definition
 
@@ -79,7 +81,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'crowdfund',
-        'USER': 'dalia',
+        'USER': 'mahmoud',
         'PASSWORD':'123',
         'HOST':'localhost'
     }

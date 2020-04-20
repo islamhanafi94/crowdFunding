@@ -1,5 +1,5 @@
 from django.db import models
-
+from users.models import Users
 # Create your models here.
 
 class Categories(models.Model):
@@ -14,10 +14,10 @@ class Projects(models.Model):
     title = models.CharField(max_length=50)
     details = models.CharField(max_length=100)
     category = models.ForeignKey('Categories', null=True, on_delete=models.CASCADE)
-    total_target = models.IntegerField(min_value=0)
+    total_target = models.IntegerField()
     start_date = models.DateField(auto_now=True)
     end_date = models.DateField(auto_now=False, auto_now_add=False)
-    rating = models.FloatField(max_value=5, min_value=0)
+    rating = models.FloatField()
     featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -48,7 +48,7 @@ class Project_pics(models.Model):
 class Project_donations(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
     project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE)
-    donation = models.IntegerField(min_value=1)
+    donation = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -67,7 +67,7 @@ class Project_comments(models.Model):
 
 class Comment_replies(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
-    Comment = models.ForeignKey('Comments', null=True, on_delete=models.CASCADE)
+    Comment = models.ForeignKey('Project_comments', null=True, on_delete=models.CASCADE)
     reply = models.TextField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -78,8 +78,8 @@ class Comment_replies(models.Model):
 
 class Rating(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
-    project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE)
-    rating = models.FloatField(max_value=5, min_value=0)
+    project = models.ForeignKey('Projects', related_name='+' ,null=True, on_delete=models.CASCADE)
+    rating = models.FloatField()
 
     # def __str__(self):
     #         return self.name
@@ -87,7 +87,7 @@ class Rating(models.Model):
 class Reports(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
     project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE)
-    Comment = models.ForeignKey('Comments', null=True, on_delete=models.CASCADE)
+    Comment = models.ForeignKey('Project_comments', null=True, on_delete=models.CASCADE)
     report = models.TextField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

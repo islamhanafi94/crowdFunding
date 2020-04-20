@@ -35,6 +35,7 @@ AUTH_USER_MODEL = 'users.Users'
 INSTALLED_APPS = [
     'users',
     'projects',
+    'django_extensions',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -84,9 +85,9 @@ DATABASES = {
         'USER': 'mahmoud',
         'PASSWORD':'123',
         'HOST':'localhost'
-        'OPTIONS': {
-            'read_default_file': os.path.join(BASE_DIR, "mysql.conf"),
-        },
+        # 'OPTIONS': {
+        #     'read_default_file': os.path.join(BASE_DIR, "mysql.conf"),
+        # },
     }
 }
 
@@ -130,5 +131,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 # STATIC_ROOT = 'static'
 #
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

@@ -79,8 +79,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'crowdfund',
-        'USER': '',
-        'PASSWORD':'',
+        'USER': 'dalia',
+        'PASSWORD':'123',
         'HOST':'localhost'
     }
 }

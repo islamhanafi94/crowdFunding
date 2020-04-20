@@ -16,7 +16,7 @@ def test(request):
 def register_view(request):
     context = {}
     if request.POST:
-        form = RegistraionForm(request.POST)
+        form = RegistraionForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
             # email = form.cleaned_data.get('email')

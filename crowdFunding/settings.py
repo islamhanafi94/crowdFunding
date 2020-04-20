@@ -84,6 +84,9 @@ DATABASES = {
         'USER': 'mahmoud',
         'PASSWORD':'123',
         'HOST':'localhost'
+        'OPTIONS': {
+            'read_default_file': os.path.join(BASE_DIR, "mysql.conf"),
+        },
     }
 }
 

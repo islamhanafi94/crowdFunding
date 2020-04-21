@@ -53,7 +53,7 @@ def register_view(request):
             email.send()
             return HttpResponse('Please confirm your email address to complete the registration')
 #############################################################################################################################
-            return redirect('users')
+            # return redirect('users')
         else:
             context['form'] = form
     else:

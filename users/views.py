@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate,logout
 from users.forms import *
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponse
@@ -81,3 +81,35 @@ def activate(request, uidb64):
         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
     else:
         return HttpResponse('Activation link is invalid!')
+
+
+
+
+def login_view(request):
+    context = {}
+    user = request.user
+
+    if user.is_authenticated:
+        return redirect('home')
+    
+    if request.POST:
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = request.POST['email']
+            password = request.POST['password']
+            user = authenticate(email=email,password=password)
+            if user : 
+                login(request,user)
+                return redirect('users')
+    
+    else : 
+        form = LoginForm()
+    
+    context['form'] = form
+
+    return render(request,'users/login.html',context)
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('users')

@@ -1,10 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
+
 <body>
     <h1>{{greeting}}</h1>
+    {%if request.user.is_authenticated%}
+    <a href="{% url 'logout' %}">logout</a>
+    <h1>you are logged in</h1>
+    {%else%}
+    <a href="{% url 'login' %}">login</a>
+    <h1>you are not logged in</h1>
+    {%endif%}
 </body>
+
 </html>

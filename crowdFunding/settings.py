@@ -88,13 +88,9 @@ EMAIL_PORT = 587
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'crowdfund',
-        'USER': 'mahmoud',
-        'PASSWORD':'123',
-        'HOST':'127.0.0.1'
-        # 'OPTIONS': {
-        #     'read_default_file': os.path.join(BASE_DIR, "mysql.conf"),
-        # },
+        'OPTIONS': {
+            'read_default_file': os.path.join(BASE_DIR, "mysql.conf"),
+        },
     }
 }
 

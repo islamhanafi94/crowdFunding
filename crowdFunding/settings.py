@@ -78,13 +78,20 @@ WSGI_APPLICATION = 'crowdFunding.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'ahmed62437@student.must.edu.eg'
+EMAIL_HOST_PASSWORD = '07d0a4'
+EMAIL_PORT = 587
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'crowdfund',
-        'USER': 'mahmoud',
-        'PASSWORD':'123',
-        'HOST':'localhost'
+        'USER': 'root',
+        'PASSWORD':'',
+        'HOST':'127.0.0.1'
         # 'OPTIONS': {
         #     'read_default_file': os.path.join(BASE_DIR, "mysql.conf"),
         # },

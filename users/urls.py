@@ -8,7 +8,7 @@ from django.conf.urls import url
 app_name = 'users'
 
 urlpatterns = [
-    path('', test, name='users'),
+    path('', test, name='home'),
     path('register', register_view, name='register'),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/$',
         activate, name='activate'),

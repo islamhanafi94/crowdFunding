@@ -20,7 +20,7 @@ from users.models import Users
 
 def test(request):
     context = {'greeting': 'hello'}
-    return render(request, 'users/test.html', context)
+    return render(request, 'users/home.html', context)
 
 
 def register_view(request):

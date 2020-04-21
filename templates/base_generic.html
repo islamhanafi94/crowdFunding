@@ -11,6 +11,12 @@
 </head>
 
 <body>
+    {% if request.user.is_authenticated %}
+        {% include 'users/user_nav.html' with user=user%}
+    {% else %}
+        {% include "visitor_nav.html" %}
+    {% endif %}
+
 {% block content %}
 {% endblock content %}
 </body>

@@ -77,7 +77,8 @@ def login_view(request):
     user = request.user
 
     if user.is_authenticated:
-        return redirect(reverse("users:home"))
+        # return redirect(reverse("users:home"))
+        return redirect('home_page')
 
     if request.POST:
         form = LoginForm(request.POST)
@@ -87,7 +88,8 @@ def login_view(request):
             user = authenticate(email=email, password=password)
             if user:
                 login(request, user)
-                return redirect(reverse("users:home"))
+                # return redirect(reverse("users:home"))
+                return redirect('home_page')
 
     else:
         form = LoginForm()
@@ -99,7 +101,8 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return redirect(reverse("users:home"))
+    # return redirect(reverse("users:home"))
+    return redirect('home_page')
 
 
 def send_email(user, current_site, email):

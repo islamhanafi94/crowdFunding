@@ -6,7 +6,7 @@ class Categories(models.Model):
     title = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.name
+        return self.title
 
 
 class Projects(models.Model):
@@ -22,14 +22,14 @@ class Projects(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # def __str__(self):
-    #     return self.name
+    def __str__(self):
+        return self.title
 
 class Tags(models.Model):
     name = models.CharField(max_length=50)
 
-    # def __str__(self):
-    #     return self.name
+    def __str__(self):
+        return self.name
 
 class Project_tags(models.Model):
     project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE)
@@ -52,8 +52,8 @@ class Project_donations(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # def __str__(self):
-    #         return self.name
+    def __str__(self):
+        return self.donation
 
 class Project_comments(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
@@ -62,8 +62,8 @@ class Project_comments(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # def __str__(self):
-    #         return self.name
+    def __str__(self):
+        return self.comment
 
 class Comment_replies(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
@@ -72,8 +72,8 @@ class Comment_replies(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # def __str__(self):
-    #         return self.name
+    def __str__(self):
+        return self.reply
 
 
 class Rating(models.Model):
@@ -81,8 +81,8 @@ class Rating(models.Model):
     project = models.ForeignKey('Projects', related_name='+' ,null=True, on_delete=models.CASCADE)
     rating = models.FloatField()
 
-    # def __str__(self):
-    #         return self.name
+    def __str__(self):
+        return self.rating
 
 class Reports(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
@@ -92,7 +92,7 @@ class Reports(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # def __str__(self):
-    #         return self.name
+    def __str__(self):
+        return self.report
 
 

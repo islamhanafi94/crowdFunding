@@ -29,8 +29,9 @@ def home(request):
         'latestFiveList': latestFiveList,
         'featuredList': featuredList,
         'highRatedProjects': highRatedProjects,
-        'categories': categories
+        'categories': categories,
+        'Ahmed':'Ahmed',
     }
-    return render(request, 'projects/home.html', context)
+    return render(request, 'home_page.html', context)
 
 

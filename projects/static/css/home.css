@@ -1,0 +1,71 @@
+.slideCss {
+    width: 100%;
+    height: 380px;
+}
+
+.slide_show {
+    width: 100%;
+}
+
+.latestproject {
+    margin-top: 2%;
+}
+
+.fproject {
+    margin-top: 2%;
+    width: 18%;
+    margin-left: 2%;
+}
+
+.desc {
+    max-lines: 1;
+    line-height: 20px;
+    max-height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.projImg {
+    width: 100%;
+    height: 170px;
+}
+
+.subTitle {
+    margin-top: 5%;
+    margin-left: 35%;
+    font-style: oblique;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #3a6073;
+}
+
+hr {
+    width: 120px;
+    margin-top: 10px;
+    margin-left: 43%;
+    background-color: #16222A;
+}
+
+.categs {
+    width: 12%;
+    height: 12%;
+    margin: 3%;
+    background-color: red;
+    color: red;
+}
+
+.sliderTitle {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 50px;
+    font-style: bold;
+}
+
+.sliderDesc {
+    font-family: initial;
+    font-size: 25px;
+    font-style: oblique;
+    max-lines: 1;
+    line-height: 30px;
+    max-height: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

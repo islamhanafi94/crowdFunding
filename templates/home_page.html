@@ -80,7 +80,8 @@ hr {
 }
 </style>
     <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
-        <div class="carousel-inner" >
+    {% if highRatedProjects %}
+            <div class="carousel-inner" >
         {% for p in highRatedProjects %}
             {% if forloop.counter == 1 %}
                 <div class="carousel-item slideCss active" >
@@ -105,9 +106,78 @@ hr {
                 </div>
             {% endif %}
         {% endfor %}
+         {%else%}
+                {% if 'search' not in request.path %}
+                 <div class="col-md-12">highest five not available</div>
+        {% endif %}
+      {% endif %}
         </div>
     </div>
+   
+  <div class="container">
+    <div class="row">
+      <div class="row col-md-12 mt-4">
+        <form class="row col-12 example text-center" action="{% url 'search' %}">
+          <div class="offset-3 col-5 row">
+            <input class="col-12" id="search_input" name="search" type="text" placeholder="Search.." name="search">
+          </div>
+          <div class="col-2 row">
+            <button class="col-12" id="search_btn" type="submit"><i class="fa fa-search"></i></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
+  <!--start of search-->
+  <section id="projects_search" class="py-4">
+    <div class="container">
+      <div class="row">
+        {% if projects_search %}
+          {% for project in projects_search %}
+            <div class="col-md-6 col-lg-4 mb-4">
+              <div class="card">
+          {% for picture in picture %}
+                  <img class="card-img-top" src="{{ picture }}" alt="image not available">
+          {% endfor %}
+
+                <div>
+                  <h2>
+                    <span class="badge badge-secondary text-white">${{ project.total_target }}</span>
+                  </h2>
+                </div>
+                <div class="card-body">
+                  <div class="text-center">
+                    <h5 class="text-primary">{{ project.title }}</h5>
+                    <h6 class="text-primary">Owner: {{ project.user.first_name }}</h6>
+                    <p>Category: {{ project.category.title }}</p>
+                  </div>
+                  <hr>
+                  <div class="row py-1 text-secondary">
+                    <div class="col-6">
+                      <div>Start</div>
+                      <div>{{ project.start_date }}</div>
+                    </div>
+                    <div class="col-6">
+                      <div>End</div>
+                      <div>{{ project.end_date }}</div>
+                    </div>
+                  </div>
+                  <hr>
+                  <a href="" class="btn btn-primary btn-block">More
+                    Info</a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!--end of search-->
     <h1 class="subTitle"> Latest Projects</h1> 
     <hr>
 

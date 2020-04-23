@@ -35,8 +35,8 @@ class Project_tags(models.Model):
     project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE)
     tag = models.ForeignKey('Tags', null=True, on_delete=models.CASCADE)
 
-    # def __str__(self):
-    #     return self.name
+    def __str__(self):
+        return self.Tags.name
 
 class Project_pics(models.Model):
     project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE)

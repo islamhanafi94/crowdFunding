@@ -1,0 +1,42 @@
+{% extends "base_generic.html" %}
+
+{% block title %}Donations{% endblock %}
+
+
+{% block content %}
+
+<main role="main" class="col-md-12 ml-sm-auto col-lg-12 pt-3 px-4">
+    <h2>My Donations</h2>
+    <div class="table-responsive">
+    <table class="table table-striped ">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Project</th>
+            <th scope="col">Category</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Date</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for donation in donations_list %}
+        <tr>
+            <td scope="row">12</td>
+            
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No donations</td>
+        </tr>
+
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</main>
+
+
+
+{% endblock content %}
+

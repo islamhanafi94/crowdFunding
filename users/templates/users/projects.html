@@ -1,0 +1,96 @@
+{% extends "base_generic.html" %}
+
+{% block title %}Projects{% endblock %}
+{% load bootstrap4 %}
+
+
+{% block content %}
+<div class="container-fluid">
+<div class="row">
+    {% comment %} {% include "users/partials/side_bar.html" with categories_list=categories_list%} {% endcomment %}
+
+  <main role="main" class="col-md-12 ml-sm-auto col-lg-12 pt-3 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+      <h1 class="h2">My Projects</h1>
+      <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">New campaign</button>
+        </div>
+      <div class="btn-group mr-2" role="group" aria-label="Second group">
+          <button class="btn btn-md btn-primary">Browse Projects</button>
+      </div>
+        
+      </div>
+    </div>
+    
+    <div class="table-responsive">
+    <table class="table table-striped ">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Project title</th>
+            <th scope="col">Category</th>
+            <th scope="col">Raised</th>
+            <th scope="col">Target</th>
+            <th scope="col">End Date</th>
+            <th scope="col">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for donation in donations_list %}
+        <tr>
+            <td scope="row">12</td>
+            
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">No Projects</td>
+        </tr>
+
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</main>
+
+
+</div>
+
+</div>
+
+<!-- Large modal -->
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" enctype="multipart/form-data">
+          {%csrf_token%}
+          {% bootstrap_form project_form %}
+          {% buttons %}
+            <button type="submit" class="btn btn-primary">
+              Submit
+            </button>
+          {% endbuttons %}
+      <form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock content %}
+
+

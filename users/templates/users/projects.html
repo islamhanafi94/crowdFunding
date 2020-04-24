@@ -1,6 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block title %}Projects{% endblock %}
+{% load bootstrap4 %}
 
 
 {% block content %}
@@ -13,13 +14,12 @@
       <h1 class="h2">My Projects</h1>
       <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group mr-2" role="group" aria-label="First group">
-          <button class="btn btn-md btn-primary">New Project</button>
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">New campaign</button>
         </div>
       <div class="btn-group mr-2" role="group" aria-label="Second group">
           <button class="btn btn-md btn-primary">Browse Projects</button>
       </div>
-
-          
+        
       </div>
     </div>
     
@@ -59,6 +59,38 @@
 
 </div>
 
+<!-- Large modal -->
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" enctype="multipart/form-data">
+          {%csrf_token%}
+          {% bootstrap_form project_form %}
+          {% buttons %}
+            <button type="submit" class="btn btn-primary">
+              Submit
+            </button>
+          {% endbuttons %}
+      <form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 {% endblock content %}
+
 

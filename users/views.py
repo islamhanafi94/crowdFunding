@@ -14,7 +14,7 @@ from django.core.mail import EmailMessage
 from users.models import Users
 import datetime
 from projects.models import Categories, Projects, Project_donations
-
+from projects.forms import NewProject
 
 # Create your views here.
 
@@ -127,10 +127,14 @@ def send_email(user, current_site, email):
 def list_projects(request):
     # get all categories
     categories_list = Categories.objects.all()
-    user_projects = Projects.objects.filter(user_id=request.user.id)
     # get users's projects
+    user_projects = Projects.objects.filter(user_id=request.user.id)
+
+    project_form = NewProject()
     context = {"categories_list": categories_list,
-               "user_projects": user_projects}
+               "user_projects": user_projects,
+               "project_form": project_form,
+               }
 
     return render(request, 'users/projects.html', context=context)
 

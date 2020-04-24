@@ -165,4 +165,9 @@ def user_profile_update(request):
             }
         )
     context = {'form' : form}
+    return render(request , 'users/user_profile_update.html',context=context)
+
+
+def user_profile(request):
+    context = {}
     return render(request , 'users/user_profile.html',context=context)

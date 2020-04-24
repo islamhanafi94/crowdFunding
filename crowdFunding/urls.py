@@ -17,14 +17,16 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from projects.views  import home ,search
+from projects.views  import home ,search,showCategoryProjects
 
 urlpatterns = [
     path('',home,name='home_page'),
     path('user/', include('users.urls')),
     path('project/', include('projects.urls')),
     path('admin/', admin.site.urls),
-     path('search', search, name="search")
+    path('search', search, name="search"),
+    path('showCategory/<int:cat_id>',showCategoryProjects ,name="show_cate"),
+
     
 ]
 # + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

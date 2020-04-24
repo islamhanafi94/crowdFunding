@@ -180,8 +180,12 @@ hr {
   <!--end of search-->
     <h1 class="subTitle"> Latest Projects</h1> 
     <hr>
+     {% comment %} {% if 'search' not in request.path %}
+        <div class="h1 text-center">Latest Five Projects</div>
+      {% endif %} {% endcomment %}
 
     <div class="row">
+    {% if latestFiveList %}
         {% for p in latestFiveList %}
         {% if forloop.counter  != 2 and forloop.counter  <= 3 %}
             <div class="col-md-3 latestproject">
@@ -215,6 +219,12 @@ hr {
             </div>
         {% endif %}
         {% endfor %}
+    {% else %}
+          {% if 'search' not in request.path %}
+            <h1>No Projects Available</h1>
+          {% endif %}
+    {% endif %}
+    
     </div>
 
     <h1 class="subTitle"> Featured Projects</h1> 
@@ -240,6 +250,7 @@ hr {
     <div class="row">
         {% for c in categories %}
             <div class="categs">
+                <a href="{% url 'show_cate' c.id %}">
                 <h5 class="card-title" style="text-align: center;">{{c.title }}</h5>
             </div>
         {% endfor %}

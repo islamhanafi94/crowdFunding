@@ -1,5 +1,5 @@
 from django.urls import path
-from users.views import test, register_view, activate, login_view, logout_view, list_projects, donations_list
+from users.views import test, register_view, activate, login_view, logout_view, list_projects, donations_list,user_profile_update
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import url
@@ -16,6 +16,7 @@ urlpatterns = [
     path('logout', logout_view, name='logout'),
     path('projects', list_projects, name='projects'),
     path('donations', donations_list, name='donations'),
+    path('profile/update',user_profile_update,name="profile_update"),
 
 
 ]

@@ -1,0 +1,14 @@
+{% extends "base_generic.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+    <h4>welcome, {{request.user.first_name}}</h4>
+    <!-- image: <img src="{{request.user.photo.url}}" alt="cannot load photo" width="50px" height="50px"> -->
+    <form method="post">
+        {%csrf_token%}
+        {{ form.as_p }}
+        <button type="submit">update</button>
+    </form>
+
+{% endblock content %}

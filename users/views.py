@@ -13,7 +13,7 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from users.models import Users
 import datetime
-from projects.models import Categories, Projects
+from projects.models import Categories, Projects, Project_donations
 
 
 # Create your views here.
@@ -136,5 +136,8 @@ def list_projects(request):
 
 
 def donations_list(request):
-    context = {}
+
+    user_donations = Project_donations.objects.filter(user_id=request.user.id)
+
+    context = {"user_donations": user_donations}
     return render(request, 'users/donations.html', context=context)

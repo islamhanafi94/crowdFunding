@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth import login, authenticate, logout
-from users.forms import RegistraionForm , LoginForm
+from users.forms import RegistraionForm, LoginForm
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponse
 from django.http import HttpResponse
@@ -13,13 +13,15 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from users.models import Users
 import datetime
+from projects.models import Categories, Projects
+
 
 # Create your views here.
 
 
 def test(request):
-    context = {"greeting": "hello"}
-    return render(request, "users/home.html", context)
+    return HttpResponse("Should route to web app home page")
+    # return render(request, "users/home.html", context)
 
 
 def register_view(request):
@@ -29,7 +31,8 @@ def register_view(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.save()
-            send_email(user, get_current_site(request), form.cleaned_data.get("email"))
+            send_email(user, get_current_site(request),
+                       form.cleaned_data.get("email"))
             return HttpResponse(
                 "Please confirm your email address to complete the registration"
             )
@@ -51,7 +54,8 @@ def activate(request, uidb64):
     if user is not None:
         if user.is_active == False:
             date_joined = user.date_joined.replace(tzinfo=None)
-            date_diffrince = (datetime.datetime.now() - date_joined).seconds / 60
+            date_diffrince = (datetime.datetime.now() -
+                              date_joined).seconds / 60
 
             if date_diffrince < (60*24):
                 user.is_active = True
@@ -66,7 +70,7 @@ def activate(request, uidb64):
                 user.date_joined = datetime.datetime.now()
                 user.save()
                 return HttpResponse("activation link is valid for five minutes only...")
-        else :
+        else:
             return HttpResponse("Activation link is invalid!")
     else:
         return HttpResponse("Activation link is invalid!")
@@ -118,3 +122,19 @@ def send_email(user, current_site, email):
     to_email = email
     email = EmailMessage(mail_subject, message, to=[to_email])
     email.send()
+
+
+def list_projects(request):
+    # get all categories
+    categories_list = Categories.objects.all()
+    user_projects = Projects.objects.filter(user_id=request.user.id)
+    # get users's projects
+    context = {"categories_list": categories_list,
+               "user_projects": user_projects}
+
+    return render(request, 'users/projects.html', context=context)
+
+
+def donations_list(request):
+    context = {}
+    return render(request, 'users/donations.html', context=context)

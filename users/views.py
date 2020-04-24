@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth import login, authenticate, logout
-from users.forms import RegistraionForm, LoginForm
+from users.forms import RegistraionForm, LoginForm , UpdateUserForm
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponse
 from django.http import HttpResponse
@@ -145,3 +145,24 @@ def donations_list(request):
 
     context = {"user_donations": user_donations}
     return render(request, 'users/donations.html', context=context)
+
+
+
+def user_profile_update(request):
+    form = UpdateUserForm(request.POST,instance=request.user)
+    if request.POST:
+        if form.is_valid():
+            form.save()
+    else :
+        form = UpdateUserForm(
+            initial= {
+                'first_name':request.user.first_name,
+                'last_name':request.user.last_name,
+                'phone':request.user.phone,
+                'date birth':request.user.date_birth,
+                'facebook_link':request.user.facebook_link,
+                'country':request.user.country
+            }
+        )
+    context = {'form' : form}
+    return render(request , 'users/user_profile.html',context=context)

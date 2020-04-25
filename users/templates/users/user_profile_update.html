@@ -3,12 +3,32 @@
 {% block title %}Update Profile{% endblock %}
 
 {% block content %}
-    <h4>welcome, {{request.user.first_name}}</h4>
-    <!-- image: <img src="{{request.user.photo.url}}" alt="cannot load photo" width="50px" height="50px"> -->
-    <form method="post">
-        {%csrf_token%}
-        {{ form.as_p }}
-        <button type="submit">update</button>
-    </form>
+<h4>welcome, {{request.user.first_name}}</h4>
+
+<form method="post" enctype="multipart/form-data">
+    <!-- {%csrf_token%}
+        {{ form.as_p }} -->
+
+    {%csrf_token%}
+
+    {% for filed in form  %}
+    <p>
+        {{filed.label_tag}}
+        {{filed}}
+    </p>
+
+    {% for error in filed.errors  %}
+    <p style="color: red;">- {{error}}</p>
+    {% endfor %}
+
+    {% endfor %}
+
+    {%if form.non_field_errors%}
+    <p>
+        {{form.non_field_errors}}
+    </p>
+    {%endif%}
+    <button type="submit">update</button>
+</form>
 
 {% endblock content %}

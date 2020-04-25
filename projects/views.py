@@ -4,13 +4,14 @@ from users.models import Users
 from .models import *
 from django.contrib.auth.models import User
 from django.db.models import  Avg, Sum
+from decimal import Decimal, ROUND_HALF_UP 
 # Create your views here.
 # Create your views here.
 
 # http://127.0.0.1:8000/project/home
 # I Want to make this render the tamplate that in the root 
 def home(request):
-    projectRates = Rating.objects.all().values('project').annotate(
+    projectRates = Project_rating.objects.all().values('project').annotate(
         Avg('rating')).order_by('-rating__avg')[:5]
     print(projectRates)
 
@@ -34,4 +35,39 @@ def home(request):
     }
     return render(request, 'home_page.html', context)
 
+# http://127.0.0.1:8000/project/:id
+def project_page(res, id):
+    project = Projects.objects.get(id=id)
+    user = res.user.id
+    donations = project.project_donations_set.all().aggregate(Sum("donation"))
+    user_rating = project.project_rating_set.get(user_id=user).rating
+    if donations["donation__sum"] >= (project.total_target*0.25):
+        donations_flag = 0
+    else:
+        donations_flag = 1
+    context = { 'project': project,
+                'donations_flag' : donations_flag,
+                'user_rate' : Decimal(user_rating).quantize(0, ROUND_HALF_UP)
+            }
+    return render(res, 'projects/project_page.html', context)
 
+# http://127.0.0.1:8000/project/:id/cancel
+def cancel_project(res, id):
+    if res.method == "POST":
+        user = res.user.id
+        project = Projects.objects.get(id=id, user_id=user)
+        if not project:
+            raise HttpResponseForbidden("Not Authorized")
+        project.delete()
+        return render(res, 'projects/test_page.html', {'test' : "canceled"} )
+
+
+def project_rating(res, id, rate):
+    if res.method == "POST":
+        user = res.user.id
+        project = Projects.objects.get(id=id)
+        Project_rating.objects.update_or_create(project_id=id, user_id=user, rating=rate)
+        project_rating = project.project_rating_set.all().aggregate(Avg("rating"))["rating__avg"]
+        project_rating = Decimal(project_rating).quantize(0, ROUND_HALF_UP)
+        project.update_or_create(rating=project_rating)
+        return render(res, 'projects/test_page.html', {'test' : "rated"})

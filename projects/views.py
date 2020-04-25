@@ -39,7 +39,6 @@ def search(request):
         # search_set = Projects.objects.filter(Q(title__icontains = search_keyword)|Q(project_tags__name__icontains = search_keyword)).distinct()
         search_set = Projects.objects.filter(Q(title__icontains = search_keyword))
         search_set2=Project_tags.objects.filter(Q(tag__name__icontains = search_keyword)).distinct()
-        #search_set = Project.objects.filter(tages__name__startswith = search_keyword)
         context = {
             "projects_search": search_set,
             "projects_search2": search_set2,
@@ -50,15 +49,8 @@ def search(request):
     else:
          return render(request, 'home_page.html', context)
 def showPic(request,id):
-        pic=Project_pics.objects.all().filter(project_id=id)
-        context={
-            'picture':pic
 
-        }
         return render(request, 'home_page.html', context)
-
-    
-
 
 def showCategoryProjects(request, cat_id):
     c = get_object_or_404(Categories, pk=cat_id)

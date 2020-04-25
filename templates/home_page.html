@@ -2,7 +2,6 @@
 {% load static %}
 {% block head-css %}
     <link href="{% static 'css/home.css' %}" type="text/css" rel="stylesheet" media="screen">
-    {% comment %} <link rel="stylesheet" href="{{ STATIC_URL }} css/home.css" />  {% endcomment %}
 {% endblock %}
 {% load bootstrap4 %}
 {% bootstrap_css %}
@@ -178,7 +177,7 @@ hr {
   </section>
 
   <!--end of search-->
-    <h1 class="subTitle"> Latest Projects</h1> 
+    <h1 class="subTitle">  Latest Projects</h1> 
     <hr>
      {% comment %} {% if 'search' not in request.path %}
         <div class="h1 text-center">Latest Five Projects</div>
@@ -189,6 +188,7 @@ hr {
         {% for p in latestFiveList %}
         {% if forloop.counter  != 2 and forloop.counter  <= 3 %}
             <div class="col-md-3 latestproject">
+          ss:  {{ p.pictures }}
                 <div class="card cardDes">
                     <img src="https://eitrawmaterials.eu/wp-content/uploads/2019/10/shutterstock_773293384-3.jpg" class="card-img-top projImg"> </a>
                     <div class="card-body">

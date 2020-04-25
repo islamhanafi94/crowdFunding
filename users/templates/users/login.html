@@ -1,3 +1,4 @@
+{% extends "base_generic.html" %}
 <h1>login page</h1>
 
 <form method="post" enctype="multipart/form-data">
@@ -10,18 +11,15 @@
     </p>
 
     {% for error in filed.errors  %}
-    <p>{{error}}</p>
+    <p style="color: red;">{{error}}</p>
     {% endfor %}
 
-    {%if login_form.non_field.errors%}
+    {% endfor %}
+
+    {%if form.non_field_errors%}
     <p>
-        {{login_form.non_field.errors}}
+        {{form.non_field_errors}}
     </p>
     {%endif%}
-
-    {% endfor %}
-
-
-
     <button type="submit">login</button>
 </form>

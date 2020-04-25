@@ -3,8 +3,8 @@ from django.http.response import HttpResponse, JsonResponse,HttpResponseForbidde
 from users.models import Users
 from .models import *
 from django.contrib.auth.models import User
-from django.db.models import  Avg, Sum
 from decimal import Decimal, ROUND_HALF_UP 
+from django.db.models import Q, Avg, Sum
 # Create your views here.
 # Create your views here.
 
@@ -22,16 +22,14 @@ def home(request):
             list(Projects.objects.filter(id=p.get('project'))))
         print(highRatedProjects)
 
-    latestFiveList = Projects.objects.extra(order_by=['-created_at'])
-    featuredList = Projects.objects.all().filter(featured='True')
+    latestFiveList = Projects.objects.extra(order_by=['-created_at'])[:5]
+    featuredList = Projects.objects.all().filter(featured='True')[:5]
     categories = Categories.objects.all()
-
     context = {
         'latestFiveList': latestFiveList,
         'featuredList': featuredList,
         'highRatedProjects': highRatedProjects,
         'categories': categories,
-        'Ahmed':'Ahmed',
     }
     return render(request, 'home_page.html', context)
 
@@ -71,3 +69,38 @@ def project_rating(res, id, rate):
         project_rating = Decimal(project_rating).quantize(0, ROUND_HALF_UP)
         project.update_or_create(rating=project_rating)
         return render(res, 'projects/test_page.html', {'test' : "rated"})
+def search(request):
+    if request.GET.get("search"):
+        search_keyword = request.GET.get("search")
+        # search_set = Projects.objects.filter(Q(title__icontains = search_keyword)|Q(project_tags__name__icontains = search_keyword)).distinct()
+        search_set = Projects.objects.filter(Q(title__icontains = search_keyword))
+        search_set2=Project_tags.objects.filter(Q(tag__name__icontains = search_keyword)).distinct()
+        #search_set = Project.objects.filter(tages__name__startswith = search_keyword)
+        context = {
+            "projects_search": search_set,
+            "projects_search2": search_set2,
+
+        }
+        return render(request, 'home_page.html', context)
+
+    else:
+         return render(request, 'home_page.html', context)
+def showPic(request,id):
+        pic=Project_pics.objects.all().filter(project_id=id)
+        context={
+            'picture':pic
+
+        }
+        return render(request, 'home_page.html', context)
+
+    
+
+
+def showCategoryProjects(request, cat_id):
+    c = get_object_or_404(Categories, pk=cat_id)
+    category_projects = c.projects_set.all()
+    context = {
+        'category_name': c.title,
+        'category_projects': category_projects
+    }
+    return render(request, "viewCategory.html", context)

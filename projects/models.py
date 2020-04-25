@@ -35,15 +35,15 @@ class Project_tags(models.Model):
     project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE)
     tag = models.ForeignKey('Tags', null=True, on_delete=models.CASCADE)
 
-    # def __str__(self):
-    #     return self.name
+    def __str__(self):
+        return self.Tags.name
 
 class Project_pics(models.Model):
     project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE)
     pic = models.CharField(max_length=50)
 
-    # def __str__(self):
-    #         return self.name
+    def __str__(self):
+        return str(self.project.title)
 
 class Project_donations(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)

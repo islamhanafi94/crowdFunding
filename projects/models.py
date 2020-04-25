@@ -76,13 +76,13 @@ class Comment_replies(models.Model):
         return self.reply
 
 
-class Rating(models.Model):
+class Project_rating(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
-    project = models.ForeignKey('Projects', related_name='+' ,null=True, on_delete=models.CASCADE)
+    project = models.ForeignKey('Projects',null=True, on_delete=models.CASCADE)
     rating = models.FloatField()
 
-    def __str__(self):
-        return self.rating
+    # def __str__(self):
+    #     return self.rating
 
 class Reports(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)

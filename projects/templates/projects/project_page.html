@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {{ project.title }}
+    {{ project.details }}
+
+    <h3 class="card-title"> Project Rate {{ project.rating }} </h3>
+    {% for i in '01234'|make_list %}
+        {% if rate >= forloop.counter %}
+            <span class="fa fa-star checked "></span>
+        {% else %}
+            <span class="fa fa-star  "></span>
+        {% endif %}
+    {% endfor%}
+
+    {% if donations_flag %}
+        <form action="{% url 'cancel_project' project.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="cancel">
+        </form>
+    {% endif %}
+    
+    <div style="width:auto" class="stars">
+        <br>
+        <h3>Your Rate </h3>
+        <form action="">
+              {% for i in '54321'|make_list %}
+              <input class="star star-{{i}}" id="star-{{i}}" type="radio" name="star"
+                    onchange="onRateChange({{ project.id }}, {{i}})" 
+                    {% if i|add:"0" == user_rating %} checked
+                    {% endif %} />
+              <label class="star star-{{i}}" for="star-{{i}}"></label>
+              {% endfor%}
+        </form>
+    </div>
+
+
+
+    <script>
+        onRateChange = (id, value) => {
+                $.ajax({
+                    url: `/project/${id}/rating/${value}`, type: "POST",
+                    beforeSend: function (request) { request.setRequestHeader("X-CSRFToken", 
+                    getCookie('csrftoken')); },
+                    dataType: 'json',
+                    complete: function (data) {
+                        console.log(data)
+                    }
+                });
+            }; 
+    </script>
+</body>
+</html>

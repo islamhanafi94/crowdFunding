@@ -18,6 +18,9 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from projects.views  import home ,search,showCategoryProjects
+from . import views, settings
+from django.contrib.staticfiles.urls import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path('',home,name='home_page'),
@@ -29,4 +32,8 @@ urlpatterns = [
 
     
 ]
+
+
+urlpatterns += staticfiles_urlpatterns()
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

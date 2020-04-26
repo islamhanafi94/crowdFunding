@@ -149,9 +149,10 @@ def donations_list(request):
 
 
 def user_profile_update(request):
-    form = UpdateUserForm(request.POST,instance=request.user)
+    form = UpdateUserForm(request.POST,request.FILES,instance=request.user)
     if request.POST:
         if form.is_valid():
+            print("photo from form is :",form.cleaned_data['photo'])
             form.save()
     else :
         form = UpdateUserForm(

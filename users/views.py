@@ -147,7 +147,7 @@ def donations_list(request):
     return render(request, 'users/donations.html', context=context)
 
 
-def user_profile(request):
+def user_profile_update(request):
     form = UpdateUserForm(request.POST,request.FILES,instance=request.user)
     if request.POST:
         if form.is_valid():
@@ -167,4 +167,8 @@ def user_profile(request):
             }
         )
     context = {'form' : form}
-    return render(request , 'users/user_profile.html',context=context)
+    return render(request , 'users/user_profile_update.html',context=context)
+
+
+def user_profile(request):
+    return render(request , 'users/user_profile.html')

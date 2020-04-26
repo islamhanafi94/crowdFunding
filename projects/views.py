@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http.response import HttpResponse, JsonResponse,HttpResponseForbidden
+from django.http.response import HttpResponse, JsonResponse, HttpResponseForbidden, HttpResponseRedirect
 from users.models import Users
 from .models import *
 from django.contrib.auth.models import User
@@ -39,14 +39,20 @@ def project_page(res, id):
     user = res.user.id
     donations = project.project_donations_set.all().aggregate(Sum("donation"))
     user_rating = project.project_rating_set.get(user_id=user).rating
-    if donations["donation__sum"] >= (project.total_target*0.25):
-        donations_flag = 0
+
+    if donations["donation__sum"]:
+        if donations["donation__sum"] >= (project.total_target*0.25):
+            donations_flag = 0
+        else:
+            donations_flag = 1    
     else:
         donations_flag = 1
+
     context = { 'project': project,
                 'donations_flag' : donations_flag,
                 'user_rate' : Decimal(user_rating).quantize(0, ROUND_HALF_UP)
             }
+
     return render(res, 'projects/project_page.html', context)
 
 # http://127.0.0.1:8000/project/:id/cancel
@@ -64,11 +70,14 @@ def project_rating(res, id, rate):
     if res.method == "POST":
         user = res.user.id
         project = Projects.objects.get(id=id)
-        Project_rating.objects.update_or_create(project_id=id, user_id=user, rating=rate)
+        Project_rating.objects.update_or_create(project_id=id, user_id=user, defaults={'rating': rate})
         project_rating = project.project_rating_set.all().aggregate(Avg("rating"))["rating__avg"]
-        project_rating = Decimal(project_rating).quantize(0, ROUND_HALF_UP)
-        project.update_or_create(rating=project_rating)
-        return render(res, 'projects/test_page.html', {'test' : "rated"})
+        Projects.objects.update_or_create(id=id,defaults={'rating': project_rating})
+        print('befor')
+        return redirect('project_page', id=id)
+
+
+
 def search(request):
     if request.GET.get("search"):
         search_keyword = request.GET.get("search")

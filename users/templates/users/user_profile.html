@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block title %}Profile{% endblock %}
-
+{% load bootstrap4 %}
 {% block content %}
 <div class="container">
     <div class="card text-center" style="margin-top: 50px;">
@@ -17,12 +17,41 @@
                 <li class="list-group-item">Date Of Birth: {{request.user.date_birth}}</li>
                 <li class="list-group-item">FaceBook Link: {{request.user.facebook_link}}</li>
                 <li class="list-group-item">Country: {{request.user.country}}</li>
-                <li class="list-group-item">Photo: <img src="{{request.user.photo.url}}" alt="" width="50px" height="50px"</li>
-              </ul>
+                <li class="list-group-item">Photo: <img src="{{request.user.photo.url}}" alt="" width="50px"
+                        height="50px" </li>
+            </ul>
         </div>
         <div class="card-footer text-muted">
-            <a href="{% url 'users:profile_update' %}" class="btn btn-primary">update your profile</a>
-            <a href="#" class="btn btn-danger">delete your account</a>
+
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Update
+                Your Profile</button>
+            <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLongTitle">Update Profile</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" enctype="multipart/form-data">
+                                {%csrf_token%}
+                                {% bootstrap_form form %}
+                                {% buttons %}
+                                <button type="submit" class="btn btn-primary">
+                                    Update
+                                </button>
+                                {% endbuttons %}
+                                <form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <a href="#" class="btn btn-danger">Delete Your Account</a>
         </div>
     </div>
 </div>

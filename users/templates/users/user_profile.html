@@ -1,0 +1,30 @@
+{% extends "base_generic.html" %}
+
+{% block title %}Profile{% endblock %}
+{% load bootstrap4 %}
+{% block content %}
+<div class="container">
+    <div class="card text-center" style="margin-top: 50px;">
+        <div class="card-header">
+            welcome, {{request.user.first_name}} {{request.user.last_name}}
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">First Name : {{request.user.first_name}}</li>
+                <li class="list-group-item">Last Name : {{request.user.last_name}}</li>
+                <li class="list-group-item">Email : {{request.user.email}}</li>
+                <li class="list-group-item">Phone: {{request.user.phone}}</li>
+                <li class="list-group-item">Date Of Birth: {{request.user.date_birth}}</li>
+                <li class="list-group-item">FaceBook Link: {{request.user.facebook_link}}</li>
+                <li class="list-group-item">Country: {{request.user.country}}</li>
+                <li class="list-group-item">Photo: <img src="{{request.user.photo.url}}" alt="" width="50px"
+                        height="50px" </li>
+            </ul>
+        </div>
+        <div class="card-footer text-muted">
+            <a href="{%  url 'users:profile_update' %}" class="btn btn-primary">Update Your Account</a>
+            <a href="#" class="btn btn-danger">Delete Your Account</a>
+        </div>
+    </div>
+</div>
+{% endblock content %}

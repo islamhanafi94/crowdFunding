@@ -1,14 +1,12 @@
 from django.db import models
 from users.models import Users
-
-
 # Create your models here.
 
 class Categories(models.Model):
     title = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.name
+        return self.title
 
 
 class Projects(models.Model):
@@ -23,33 +21,28 @@ class Projects(models.Model):
     featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    # def __str__(self):
-    #     return self.name
-
+    # cover=models.ImageField(upload_to="projects/images",verbose_name="cover_image" ,null=True)
+    def __str__(self):
+        return self.title
 
 class Tags(models.Model):
     name = models.CharField(max_length=50)
-
-    # def __str__(self):
-    #     return self.name
-
+    project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE,related_name="tags")
+    def __str__(self):
+        return self.project.title + " - " + self.name
 
 class Project_tags(models.Model):
     project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE)
     tag = models.ForeignKey('Tags', null=True, on_delete=models.CASCADE)
 
-    # def __str__(self):
-    #     return self.name
-
-
+    # def __unicode__(self):
+	#     return self.tag.tags
 class Project_pics(models.Model):
-    project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE)
+    project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE,related_name="pictures")
     pic = models.CharField(max_length=50)
 
-    # def __str__(self):
-    #         return self.name
-
+    def __str__(self):
+        return str(self.pic)
 
 class Project_donations(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
@@ -58,9 +51,8 @@ class Project_donations(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # def __str__(self):
-    #         return self.name
-
+    def __str__(self):
+        return self.donation
 
 class Project_comments(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
@@ -69,9 +61,8 @@ class Project_comments(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # def __str__(self):
-    #         return self.name
-
+    def __str__(self):
+        return self.comment
 
 class Comment_replies(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
@@ -80,18 +71,17 @@ class Comment_replies(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # def __str__(self):
-    #         return self.name
+    def __str__(self):
+        return self.reply
 
 
-class Rating(models.Model):
+class Project_rating(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
-    project = models.ForeignKey('Projects', related_name='+', null=True, on_delete=models.CASCADE)
+    project = models.ForeignKey('Projects',null=True, on_delete=models.CASCADE)
     rating = models.FloatField()
 
     # def __str__(self):
-    #         return self.name
-
+    #     return self.rating
 
 class Reports(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
@@ -101,5 +91,5 @@ class Reports(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # def __str__(self):
-    #         return self.name
+    def __str__(self):
+        return self.report

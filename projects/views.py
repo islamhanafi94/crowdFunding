@@ -3,18 +3,23 @@ from django.http.response import HttpResponse, JsonResponse, HttpResponseForbidd
 from users.models import Users
 from .models import *
 from django.contrib.auth.models import User
+<<<<<<< HEAD
 from django.db.models import Avg, Sum
 import datetime
 from django.contrib import messages
 
 
+=======
+from decimal import Decimal, ROUND_HALF_UP 
+from django.db.models import Q, Avg, Sum
+>>>>>>> 6737ed8dfda2e7c73d0e35a3efb52348052a8392
 # Create your views here.
 # Create your views here.
 
 # http://127.0.0.1:8000/project/home
 # I Want to make this render the tamplate that in the root 
 def home(request):
-    projectRates = Rating.objects.all().values('project').annotate(
+    projectRates = Project_rating.objects.all().values('project').annotate(
         Avg('rating')).order_by('-rating__avg')[:5]
     print(projectRates)
 
@@ -25,19 +30,66 @@ def home(request):
             list(Projects.objects.filter(id=p.get('project'))))
         print(highRatedProjects)
 
-    latestFiveList = Projects.objects.extra(order_by=['-created_at'])
-    featuredList = Projects.objects.all().filter(featured='True')
+    latestFiveList = Projects.objects.extra(order_by=['-created_at'])[:5]
+    featuredList = Projects.objects.all().filter(featured='True')[:5]
     categories = Categories.objects.all()
-
     context = {
         'latestFiveList': latestFiveList,
         'featuredList': featuredList,
         'highRatedProjects': highRatedProjects,
-        'categories': categories
+        'categories': categories,
     }
-    return render(request, 'projects/home.html', context)
+    return render(request, 'home_page.html', context)
+
+# http://127.0.0.1:8000/project/:id
+def project_page(res, id):
+    project = Projects.objects.get(id=id)
+    user = res.user.id
+    donations = project.project_donations_set.all().aggregate(Sum("donation"))
+    user_rating = project.project_rating_set.get(user_id=user).rating
+    if donations["donation__sum"] >= (project.total_target*0.25):
+        donations_flag = 0
+    else:
+        donations_flag = 1
+    context = { 'project': project,
+                'donations_flag' : donations_flag,
+                'user_rate' : Decimal(user_rating).quantize(0, ROUND_HALF_UP)
+            }
+    return render(res, 'projects/project_page.html', context)
+
+# http://127.0.0.1:8000/project/:id/cancel
+def cancel_project(res, id):
+    if res.method == "POST":
+        user = res.user.id
+        project = Projects.objects.get(id=id, user_id=user)
+        if not project:
+            raise HttpResponseForbidden("Not Authorized")
+        project.delete()
+        return render(res, 'projects/test_page.html', {'test' : "canceled"} )
 
 
+def project_rating(res, id, rate):
+    if res.method == "POST":
+        user = res.user.id
+        project = Projects.objects.get(id=id)
+        Project_rating.objects.update_or_create(project_id=id, user_id=user, rating=rate)
+        project_rating = project.project_rating_set.all().aggregate(Avg("rating"))["rating__avg"]
+        project_rating = Decimal(project_rating).quantize(0, ROUND_HALF_UP)
+        project.update_or_create(rating=project_rating)
+        return render(res, 'projects/test_page.html', {'test' : "rated"})
+def search(request):
+    if request.GET.get("search"):
+        search_keyword = request.GET.get("search")
+        search_set = Projects.objects.filter(Q(title__icontains = search_keyword)|Q(tags__name__icontains = search_keyword)).distinct()
+        context = {
+            "projects_search": search_set,
+
+        }
+        return render(request, 'home_page.html', context)
+    else:
+        return render(request, 'home_page.html',{"NOdata":"There is No such a tag or title matched our projects Plz try Again"})
+
+<<<<<<< HEAD
 def project(request, project_id):
     images = []
     try:
@@ -125,3 +177,15 @@ def comment(request, project_id):
             return redirect(f"/project/{project_id}")
     else:
         return redirect(f"/project/{project_id}")
+=======
+
+
+def showCategoryProjects(request, cat_id):
+    c = get_object_or_404(Categories, pk=cat_id)
+    category_projects = c.projects_set.all()
+    context = {
+        'category_name': c.title,
+        'category_projects': category_projects
+    }
+    return render(request, "viewCategory.html", context)
+>>>>>>> 6737ed8dfda2e7c73d0e35a3efb52348052a8392

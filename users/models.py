@@ -31,6 +31,7 @@ class MyUserManger(BaseUserManager):
                           phone=phone,photo=photo)
 
         user.is_admin = True
+        user.is_active = True
         user.is_staff = True
         user.is_superuser = True
         user.save(using = self._db)
@@ -50,7 +51,7 @@ class Users(AbstractBaseUser):
     photo = models.ImageField(verbose_name="photo",upload_to='users/images')
     date_birth = models.DateField(null=True)
     facebook_link = models.URLField(null=True)
-    country = models.CharField(max_length=50, default="")
+    country = models.CharField(max_length=50, null=True)
     date_joined = models.DateTimeField(verbose_name="date_joined",
                                        auto_now=True)
     last_login = models.DateTimeField(verbose_name="last_login", auto_now=True)

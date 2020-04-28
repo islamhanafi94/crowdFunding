@@ -1,0 +1,86 @@
+{% load static %} 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Page</title>
+
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"> 
+    <link rel="stylesheet" type="text/css" href="{% static 'css/rating.css' %}">
+</head>
+<body>
+    {{ project.title }}
+    {{ project.details }}
+    
+
+    {% if donations_flag %}
+        <form action="{% url 'cancel_project' project.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="cancel">
+        </form>
+    {% endif %}
+    
+    <div style="width:auto" class="stars">
+        <br>
+        <h3>Your Rate </h3>
+        {{user_rate}}
+        <form action="">
+              {% for i in '54321'|make_list %}
+              <input class="star star-{{i}}" id="star-{{i}}" type="radio" name="star"
+                    onchange="onRateChange({{ project.id }}, {{i}})" 
+                    {% if i|add:"0" == user_rate %} 
+                        checked 
+                    {% endif %} />
+              <label class="star star-{{i}}" for="star-{{i}}"></label>
+              {% endfor%}
+        </form>
+    </div>
+
+    <div style="width:auto" class="stars">
+        <h3 class="card-title"> Project Rate {{ project.rating }} </h3>
+        {% for i in '01234'|make_list %}
+            {% if project.rating >= forloop.counter %}
+                <span class="fa fa-star checked"></span>
+            {% else %}
+                <span class="fa fa-star "></span>
+            {% endif %}
+        {% endfor%}
+    </div>
+
+
+
+    <script>
+        function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie != '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            } 
+        onRateChange = (id, value) => {
+                console.log(id);
+                console.log(value);
+                $.ajax({
+                    url: `${id}/rating/${value}`, type: "POST",
+                    beforeSend: function (request) { request.setRequestHeader("X-CSRFToken", 
+                    getCookie('csrftoken')); },
+                    dataType: 'json',
+                    complete: function (data) {
+                        console.log(data)
+                    }
+                });
+            }; 
+    </script>
+</body>
+</html>

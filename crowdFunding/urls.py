@@ -17,12 +17,23 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from crowdFunding import views
+from projects.views  import home ,search,showCategoryProjects
+from . import views, settings
+from django.contrib.staticfiles.urls import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
-    path('', views.index),
+    path('',home,name='home_page'),
     path('user/', include('users.urls')),
     path('project/', include('projects.urls')),
     path('admin/', admin.site.urls),
+    path('search', search, name="search"),
+    path('showCategory/<int:cat_id>',showCategoryProjects ,name="show_cate"),
+
+    
 ]
+
+
+urlpatterns += staticfiles_urlpatterns()
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

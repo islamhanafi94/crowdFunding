@@ -38,8 +38,11 @@ def project_page(res, id):
     project = Projects.objects.get(id=id)
     user = res.user.id
     donations = project.project_donations_set.all().aggregate(Sum("donation"))
-    user_rating = project.project_rating_set.get(user_id=user).rating
-
+    user_rating_count = Project_rating.objects.filter(project_id=id, user_id=user).count()
+    if user_rating_count:
+        user_rating = Project_rating.objects.get(project_id=id, user_id=user).rating
+    else:
+        user_rating = 0    
     if donations["donation__sum"]:
         if donations["donation__sum"] >= (project.total_target*0.25):
             donations_flag = 0
@@ -50,7 +53,7 @@ def project_page(res, id):
 
     context = { 'project': project,
                 'donations_flag' : donations_flag,
-                'user_rate' : Decimal(user_rating).quantize(0, ROUND_HALF_UP)
+                'user_rate' : user_rating
             }
 
     return render(res, 'projects/project_page.html', context)
@@ -65,7 +68,7 @@ def cancel_project(res, id):
         project.delete()
         return render(res, 'projects/test_page.html', {'test' : "canceled"} )
 
-
+# http://127.0.0.1:8000/project/:id/rating/:rate
 def project_rating(res, id, rate):
     if res.method == "POST":
         user = res.user.id

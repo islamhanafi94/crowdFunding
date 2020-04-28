@@ -70,28 +70,13 @@
         </button>
       </div>
       <div class="modal-body">
-        <form id="project_form" method="post" enctype="multipart/form-data">
+        <form id="project_form" method="post" action="{% url 'projects:new_project' %}" enctype="multipart/form-data">
           {% csrf_token %}
-          {% for hidden in project_form.hidden_fields %}
-              {{ hidden }}
-          {% endfor %}
 
+          {% bootstrap_form NewProject %}
 
-          {% for field in project_form %}
-            <label class="control-label" for="id_{{ field.name }}">{{ field.label }}</label>
-<!--              <input type="text" class="form-control"-->
-<!--                name="{{ field.name }}"-->
-<!--                id="id_{{ field.name }}"-->
-<!--                placeholder="{{field.label}}" >-->
-          <span id="id_{{ field.name }}"> {{ field }} </span><br>
-          {% endfor %}
+          <input type="file" multiple>
 
-          {{ formset.management_form }}
-          {% image_form %}
-          {% for form in formset %}
-              {{ form }}
-          {% endfor %}
-<!--          {%csrf_token%}-->
           <div class="modal-footer">
             {% buttons %}
               <button type="submit" class="btn btn-primary">

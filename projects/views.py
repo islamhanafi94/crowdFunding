@@ -48,7 +48,7 @@ def project_page(res, id):
     if user_rating_count:
         user_rating = Project_rating.objects.get(project_id=id, user_id=user).rating
     else:
-        user_rating = 0    
+        user_rating = 0
     if donations["donation__sum"]:
         if donations["donation__sum"] >= (project.total_target * 0.25):
             donations_flag = 0
@@ -57,10 +57,10 @@ def project_page(res, id):
     else:
         donations_flag = 1
 
-    context = { 'project': project,
-                'donations_flag' : donations_flag,
-                'user_rate' : user_rating
-            }
+    context = {'project': project,
+               'donations_flag': donations_flag,
+               'user_rate': user_rating
+               }
     return render(res, 'projects/project_page.html', context)
 
 
@@ -125,33 +125,34 @@ def showCategoryProjects(request, cat_id):
 
 
 def create_project(request):
-    image_form_set = modelformset_factory(Project_pics,
-                                          form=ImageForm, extra=5)
+    # image_form_set = modelformset_factory(Project_pics,
+    #                                       form=ImageForm, extra=5)
+    print(request)
     if request.method == 'POST':
-        image_form = ImageForm()
+        # image_form = ImageForm()
         project_form = NewProject(request.POST)
-        formset = image_form_set(request.POST, request.FILES,
-                                 queryset=Project_pics.objects.none())
-        if project_form.is_valid() and formset.is_valid():
+        # formset = image_form_set(request.POST, request.FILES,
+        #                          queryset=Project_pics.objects.none())
+        if project_form.is_valid():  # and formset.is_valid():
             form = project_form.save(commit=False)
             form.user = request.user
-            form.save()
+            # form.save()
 
-            for form in formset.cleaned_data:
-                # this helps to not crash if the user
-                # do not upload all the photos
-                if form:
-                    image = form['image']
-                    photo = Project_pics(post=form, image=image)
-                    photo.save()
-            messages.success(request,
-                             "Yeeew, check it out on the home page!")
-            return HttpResponseRedirect("/user/projects")
+            # for form in formset.cleaned_data:
+            #     # this helps to not crash if the user
+            #     # do not upload all the photos
+            #     if form:
+            #         image = form['image']
+            #         photo = Project_pics(post=form, image=image)
+            #         photo.save()
+            # messages.success(request,
+            #                  "Yeeew, check it out on the home page!")
+            return HttpResponseRedirect("users/projects.html")
         else:
-            print(project_form.errors, formset.errors)
+            print(project_form.errors)  # , formset.errors)
     else:
         project_form = NewProject()
-        image_form = ImageForm()
-        formset = image_form_set(queryset=Project_pics.objects.none())
-    return render(request, 'test_page.html',
-                  {'projectForm': project_form, 'formset': formset, 'image_form': image_form})
+        # image_form = ImageForm()
+        # formset = image_form_set(queryset=Project_pics.objects.none())
+    return render(request, "users/projects.html",
+                  {'projectForm': project_form, })  # 'formset': formset, 'image_form': image_form})

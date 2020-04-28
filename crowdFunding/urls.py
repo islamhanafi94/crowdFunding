@@ -25,7 +25,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 urlpatterns = [
     path('',home,name='home_page'),
     path('user/', include('users.urls')),
-    path('project/', include('projects.urls')),
+    path('project/', include('projects.urls', namespace='projects')),
     path('admin/', admin.site.urls),
     path('search', search, name="search"),
     path('showCategory/<int:cat_id>',showCategoryProjects ,name="show_cate"),

@@ -1,25 +1,21 @@
 {% extends "base_generic.html" %}
-<h1>login page</h1>
+{% block title %}Login{% endblock %}
+{% load bootstrap4 %}
+{% block content %}
 
-<form method="post" enctype="multipart/form-data">
-    {%csrf_token%}
+<div class="container" style="margin-top: 30px;">
+    <form method="post" enctype="multipart/form-data">
+        {%csrf_token%}
+        {% bootstrap_form form %}
+        {% buttons %}
+        <button type="submit" class="btn btn-primary">
+            Login
+        </button>
+        {% endbuttons %}
+        <form>
+</div>
 
-    {% for filed in form  %}
-    <p>
-        {{filed.label_tag}}
-        {{filed}}
-    </p>
 
-    {% for error in filed.errors  %}
-    <p style="color: red;">{{error}}</p>
-    {% endfor %}
 
-    {% endfor %}
 
-    {%if form.non_field_errors%}
-    <p>
-        {{form.non_field_errors}}
-    </p>
-    {%endif%}
-    <button type="submit">login</button>
-</form>
+{% endblock content %}

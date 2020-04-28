@@ -1,5 +1,7 @@
 from django.db import models
 from users.models import Users
+
+
 # Create your models here.
 
 class Categories(models.Model):
@@ -25,11 +27,13 @@ class Projects(models.Model):
     # def __str__(self):
     #     return self.name
 
+
 class Tags(models.Model):
     name = models.CharField(max_length=50)
 
     # def __str__(self):
     #     return self.name
+
 
 class Project_tags(models.Model):
     project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE)
@@ -38,12 +42,14 @@ class Project_tags(models.Model):
     # def __str__(self):
     #     return self.name
 
+
 class Project_pics(models.Model):
     project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE)
     pic = models.CharField(max_length=50)
 
     # def __str__(self):
     #         return self.name
+
 
 class Project_donations(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
@@ -55,6 +61,7 @@ class Project_donations(models.Model):
     # def __str__(self):
     #         return self.name
 
+
 class Project_comments(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
     project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE)
@@ -64,6 +71,7 @@ class Project_comments(models.Model):
 
     # def __str__(self):
     #         return self.name
+
 
 class Comment_replies(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
@@ -78,11 +86,12 @@ class Comment_replies(models.Model):
 
 class Rating(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
-    project = models.ForeignKey('Projects', related_name='+' ,null=True, on_delete=models.CASCADE)
+    project = models.ForeignKey('Projects', related_name='+', null=True, on_delete=models.CASCADE)
     rating = models.FloatField()
 
     # def __str__(self):
     #         return self.name
+
 
 class Reports(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
@@ -94,5 +103,3 @@ class Reports(models.Model):
 
     # def __str__(self):
     #         return self.name
-
-

@@ -70,20 +70,36 @@
         </button>
       </div>
       <div class="modal-body">
-        <form method="post" enctype="multipart/form-data">
-          {%csrf_token%}
-          {% bootstrap_form project_form %}
-          {% buttons %}
-            <button type="submit" class="btn btn-primary">
-              Submit
-            </button>
-          {% endbuttons %}
-      <form>
+        <form id="project_form" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% for hidden in project_form.hidden_fields %}
+              {{ hidden }}
+          {% endfor %}
 
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+
+          {% for field in project_form %}
+            <label class="control-label" for="id_{{ field.name }}">{{ field.label }}</label>
+              <input type="text" class="form-control"
+                name="{{ field.name }}"
+                id="id_{{ field.name }}"
+                placeholder="{{field.label}}" >
+          {% endfor %}
+
+          {{ formset.management_form }}
+          {% for form in formset %}
+              {{ form }}
+          {% endfor %}
+<!--          {%csrf_token%}-->
+<!--          {% bootstrap_form project_form %}-->
+          <div class="modal-footer">
+            {% buttons %}
+              <button type="submit" class="btn btn-primary">
+                Submit
+              </button>
+            {% endbuttons %}
+          </div>
+
+        </form>
       </div>
     </div>
   </div>

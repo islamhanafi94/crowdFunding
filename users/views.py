@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth import login, authenticate, logout
-from users.forms import RegistraionForm, LoginForm , UpdateUserForm
+from users.forms import RegistraionForm, LoginForm, UpdateUserForm
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponse
 from django.http import HttpResponse
@@ -126,7 +126,7 @@ def send_email(user, current_site, email):
 
 def list_projects(request):
     # get all categories
-    categories_list = Categories.objects.all()
+    # categories_list = Categories.objects.all()
     # get users's projects
     user_projects = Projects.objects.filter(user_id=request.user.id)
 
@@ -148,27 +148,27 @@ def donations_list(request):
 
 
 def user_profile_update(request):
-    form = UpdateUserForm(request.POST,request.FILES,instance=request.user)
+    form = UpdateUserForm(request.POST, request.FILES, instance=request.user)
     if request.POST:
         if form.is_valid():
-            print("photo from form is :",form.cleaned_data['photo'])
+            print("photo from form is :", form.cleaned_data['photo'])
             request.user.photo = form.cleaned_data['photo']
             form.save()
             return redirect(reverse('users:profile'))
-    else :
+    else:
         form = UpdateUserForm(
-            initial= {
-                'first_name':request.user.first_name,
-                'last_name':request.user.last_name,
-                'phone':request.user.phone,
-                'date_birth':request.user.date_birth,
-                'facebook_link':request.user.facebook_link,
-                'country':request.user.country
+            initial={
+                'first_name': request.user.first_name,
+                'last_name': request.user.last_name,
+                'phone': request.user.phone,
+                'date_birth': request.user.date_birth,
+                'facebook_link': request.user.facebook_link,
+                'country': request.user.country
             }
         )
-    context = {'form' : form}
-    return render(request , 'users/user_profile_update.html',context=context)
+    context = {'form': form}
+    return render(request, 'users/user_profile_update.html', context=context)
 
 
 def user_profile(request):
-    return render(request , 'users/user_profile.html')
+    return render(request, 'users/user_profile.html')

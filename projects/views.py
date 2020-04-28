@@ -142,4 +142,4 @@ def create_project(request):
         # image_form = ImageForm()
         # formset = image_form_set(queryset=Project_pics.objects.none())
     return render(request, "users/projects.html",
-                  {'projectForm': project_form, })  # 'formset': formset, 'image_form': image_form})
+                  {'project_form': project_form, })  # 'formset': formset, 'image_form': image_form})

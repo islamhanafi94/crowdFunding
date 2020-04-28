@@ -2,6 +2,8 @@ from django.db import models
 from django.template.defaultfilters import slugify
 
 from users.models import Users
+
+
 # Create your models here.
 
 
@@ -25,15 +27,17 @@ class Projects(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # cover=models.ImageField(upload_to="projects/images",verbose_name="cover_image" ,null=True)
     def __str__(self):
         return self.title
 
 
 class Tags(models.Model):
     name = models.CharField(max_length=50)
+    project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE, related_name="tags")
 
     def __str__(self):
-        return self.name
+        return self.project.title + " - " + self.name
 
 
 class Project_tags(models.Model):
@@ -55,7 +59,7 @@ class Project_pics(models.Model):
     pic = models.ImageField(upload_to=get_image_name, verbose_name='Project Image')
 
     def __str__(self):
-        return str(self.project.title)
+        return str(self.pic)
 
 
 class Project_donations(models.Model):
@@ -93,7 +97,7 @@ class Comment_replies(models.Model):
 
 class Project_rating(models.Model):
     user = models.ForeignKey('users.Users', null=True, on_delete=models.CASCADE)
-    project = models.ForeignKey('Projects',null=True, on_delete=models.CASCADE)
+    project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE)
     rating = models.FloatField()
 
     # def __str__(self):
@@ -110,5 +114,3 @@ class Reports(models.Model):
 
     def __str__(self):
         return self.report
-
-

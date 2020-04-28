@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http.response import HttpResponse, JsonResponse, HttpResponseForbidden, HttpResponseRedirect
+from django.http.response import HttpResponse, JsonResponse, HttpResponseForbidden
 from users.models import Users
 from .models import *
 from django.contrib.auth.models import User
@@ -50,17 +50,18 @@ def project_page(res, id):
     else:
         user_rating = 0
     if donations["donation__sum"]:
-        if donations["donation__sum"] >= (project.total_target * 0.25):
+        if donations["donation__sum"] >= (project.total_target*0.25):
             donations_flag = 0
         else:
             donations_flag = 1
     else:
         donations_flag = 1
 
-    context = {'project': project,
-               'donations_flag': donations_flag,
-               'user_rate': user_rating
-               }
+    context = { 'project': project,
+                'donations_flag' : donations_flag,
+                'user_rate' : user_rating
+            }
+
     return render(res, 'projects/project_page.html', context)
 
 
@@ -75,43 +76,29 @@ def cancel_project(res, id):
         return render(res, 'projects/test_page.html', {'test': "canceled"})
 
 
-# http://127.0.0.1:8000/project/:id/rating/:rate
+
 def project_rating(res, id, rate):
     if res.method == "POST":
         user = res.user.id
         project = Projects.objects.get(id=id)
-        Project_rating.objects.update_or_create(project_id=id, user_id=user, defaults={'rating': rate})
+        Project_rating.objects.update_or_create(project_id=id, user_id=user, rating=rate)
         project_rating = project.project_rating_set.all().aggregate(Avg("rating"))["rating__avg"]
-        Projects.objects.update_or_create(id=id, defaults={'rating': project_rating})
-        print('befor')
-        return redirect('project_page', id=id)
+        project_rating = Decimal(project_rating).quantize(0, ROUND_HALF_UP)
+        project.update_or_create(rating=project_rating)
+        return render(res, 'projects/test_page.html', {'test' : "rated"})
 
 
 def search(request):
     if request.GET.get("search"):
         search_keyword = request.GET.get("search")
-        # search_set = Projects.objects.filter(Q(title__icontains = search_keyword)|Q(project_tags__name__icontains = search_keyword)).distinct()
-        search_set = Projects.objects.filter(Q(title__icontains=search_keyword))
-        search_set2 = Project_tags.objects.filter(Q(tag__name__icontains=search_keyword)).distinct()
-        # search_set = Project.objects.filter(tages__name__startswith = search_keyword)
+        search_set = Projects.objects.filter(Q(title__icontains = search_keyword)|Q(tags__name__icontains = search_keyword)).distinct()
         context = {
             "projects_search": search_set,
-            "projects_search2": search_set2,
 
         }
         return render(request, 'home_page.html', context)
-
     else:
-        return render(request, 'home_page.html', context)
-
-
-def showPic(request, id):
-    pic = Project_pics.objects.all().filter(project_id=id)
-    context = {
-        'picture': pic
-
-    }
-    return render(request, 'home_page.html', context)
+        return render(request, 'home_page.html',{"NOdata":"There is No such a tag or title matched our projects Plz try Again"})
 
 
 def showCategoryProjects(request, cat_id):

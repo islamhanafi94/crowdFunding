@@ -28,16 +28,15 @@ class Projects(models.Model):
 class Tags(models.Model):
     name = models.CharField(max_length=50)
 
-    def __str__(self):
-        return self.name
+    # def __str__(self):
+    #     return self.name
 
 class Project_tags(models.Model):
     project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE)
     tag = models.ForeignKey('Tags', null=True, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.Tags.name
-
+    # def __unicode__(self):
+	#     return self.tag.tags
 class Project_pics(models.Model):
     project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE,related_name="pictures")
     pic = models.CharField(max_length=50)

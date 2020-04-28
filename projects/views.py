@@ -73,8 +73,8 @@ def search(request):
     if request.GET.get("search"):
         search_keyword = request.GET.get("search")
         # search_set = Projects.objects.filter(Q(title__icontains = search_keyword)|Q(project_tags__name__icontains = search_keyword)).distinct()
-        search_set = Projects.objects.filter(Q(title__icontains = search_keyword))
-        search_set2=Project_tags.objects.filter(Q(tag__name__icontains = search_keyword)).distinct()
+        search_set = Projects.objects.filter(Q(title__icontains = search_keyword)|Q(Tags__name__icontains = search_keyword)).distinct()
+        search_set2=Project_tags.objects.filter(Q(project_tags__name__icontains = search_keyword)).distinct()
         context = {
             "projects_search": search_set,
             "projects_search2": search_set2,
@@ -84,9 +84,7 @@ def search(request):
 
     else:
          return render(request, 'home_page.html', context)
-def showPic(request,id):
 
-        return render(request, 'home_page.html', context)
 
 def showCategoryProjects(request, cat_id):
     c = get_object_or_404(Categories, pk=cat_id)

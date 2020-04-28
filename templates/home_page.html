@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 {% load static %}
 {% block head-css %}
-    <link href="{% static 'css/home.css' %}" type="text/css" rel="stylesheet" media="screen">
+    
 {% endblock %}
 {% load bootstrap4 %}
 {% bootstrap_css %}
@@ -84,17 +84,17 @@ hr {
         {% for p in highRatedProjects %}
             {% if forloop.counter == 1 %}
                 <div class="carousel-item slideCss active" >
-                      <img src="https://www.exclusivelygames.com/wp-content/uploads/2020/01/yukuykyuk.jpg" class="d-block slideCss">
+                      <img src="/media/projects/images/managment.jpg" class="d-block slideCss">
                       <div class="carousel-caption d-none d-md-block">
                         <h5 class="sliderTitle" >{{p.title}}  </h5>
-                        <h5 class="sliderTitle" >{{p.rating}}  </h5>
+                        <h5 class="sliderTitle" >{{p.total_target}}  </h5>
                         <p class="sliderDesc"> {{p.details}}</p>
                         
                       </div>
                 </div>
              {% else %}
                 <div class="carousel-item slideCss" >
-                      <img src="/static/{{p.imgs.all.first.img_url}}" class="d-block slideCss">
+                      <img src="/media/projects/images/ل.jpg" class="d-block slideCss">
                       </a>
                       <div class="carousel-caption d-none d-md-block">
                     
@@ -255,5 +255,6 @@ hr {
             </div>
         {% endfor %}
     </div>
-     
+
+       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}

@@ -147,20 +147,21 @@ def donations_list(request):
     return render(request, 'users/donations.html', context=context)
 
 
-
 def user_profile_update(request):
     form = UpdateUserForm(request.POST,request.FILES,instance=request.user)
     if request.POST:
         if form.is_valid():
             print("photo from form is :",form.cleaned_data['photo'])
+            request.user.photo = form.cleaned_data['photo']
             form.save()
+            return redirect(reverse('users:profile'))
     else :
         form = UpdateUserForm(
             initial= {
                 'first_name':request.user.first_name,
                 'last_name':request.user.last_name,
                 'phone':request.user.phone,
-                'date birth':request.user.date_birth,
+                'date_birth':request.user.date_birth,
                 'facebook_link':request.user.facebook_link,
                 'country':request.user.country
             }
@@ -170,5 +171,4 @@ def user_profile_update(request):
 
 
 def user_profile(request):
-    context = {}
-    return render(request , 'users/user_profile.html',context=context)
+    return render(request , 'users/user_profile.html')

@@ -4,7 +4,7 @@ from users.models import Users
 from django.contrib.auth import authenticate
 
 class RegistraionForm(UserCreationForm):
-    email = forms.EmailField(help_text="enter your email...")
+    email = forms.EmailField()
 
     class Meta:
         model = Users
@@ -31,43 +31,42 @@ class LoginForm(forms.ModelForm):
 
 
 
-
+class DateInput(forms.DateInput):
+    input_type = 'date'
 
 
 class UpdateUserForm(forms.ModelForm):
 
-    YEARS= [x for x in range(1940,2021)]
-    date_birth = forms.DateField(label="enter your birthdate",widget=forms.SelectDateWidget(years=YEARS),initial='1891-1-1')
-    photo = forms.ImageField(required=False)
+    date_birth = forms.DateField(required=False,widget=DateInput())
+    photo = forms.ImageField(required=False,widget=forms.FileInput)
+    facebook_link = forms.URLField(required=False)
+    country = forms.CharField(required=False)
     class Meta:
         model = Users
         fields = ('first_name','last_name','phone','photo','date_birth','facebook_link','country')
 
-
-    # def clean_first_name(self):
-    #     if self.is_valid():
-    #         first_name = self.cleaned_data['first_name'].strip()
-    #         if first_name :
-    #             return first_name
-    #         else:
-    #             raise forms.ValidationError('first name can\'t be empty')
-            
-
-    # def clean_last_name(self):
-    #     if self.is_valid():
-    #         last_name = self.cleaned_data['last_name'].strip()
-    #         if last_name :
-    #             return last_name
-    #         else:
-    #             raise forms.ValidationError('last name can\'t be empty')
-
-    
-    def clean_photo(self):
+    def clean_country(self):
         if self.is_valid():
-            photo = self.cleaned_data['photo']
-            if photo:
-                print("instance photo is :",self.instance.photo)
-                print("photo is :",self.cleaned_data['photo'])
-                return photo
-            else:
-                raise forms.ValidationError('please upload a valid photo')
+            country = self.cleaned_data['country']
+            if country:
+                return country
+            else : 
+                return None
+
+
+    def clean_facebook_link(self):
+        if self.is_valid():
+            facebook_link = self.cleaned_data['facebook_link']
+            if facebook_link:
+                return facebook_link
+            else : 
+                return None
+    
+
+    def clean_date_birth(self):
+        if self.is_valid():
+            date_birth = self.cleaned_data['date_birth']
+            if date_birth:
+                return date_birth
+            else : 
+                return None

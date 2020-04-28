@@ -90,11 +90,27 @@ def project_rating(res, id, rate):
 
 def search(request):
     if request.GET.get("search"):
+        res = []
         search_keyword = request.GET.get("search")
-        search_set = Projects.objects.filter(Q(title__icontains = search_keyword)|Q(tags__name__icontains = search_keyword)).distinct()
-        context = {
-            "projects_search": search_set,
+        search_tag_counter = Tags.objects.filter(name=search_keyword).count()
+        if search_tag_counter:
+            search_tag = Tags.objects.get(name=search_keyword)
+            search_set = Project_tags.objects.filter(tag_id=search_tag.id)
+            for project in search_set:
+                res.append(Projects.objects.get(id=project.project_id))
+        elif search_tag_counter == 0:
+            res = Projects.objects.filter(title=search_keyword)
+        else:
+            res = ["No res"]   
 
+        # search_set = Projects.objects.filter(Q(title__icontains = search_keyword)|Q(project_tags__name__icontains = search_keyword)).distinct()
+        # search_set = Projects.objects.filter(Q(title__icontains = search_keyword))
+        # search_set2=Project_tags.objects.filter(Q(tag__name__icontains = search_keyword)).distinct()
+        #search_set = Project.objects.filter(tages__name__startswith = search_keyword)
+        context = {
+            # "projects_search": search_set,
+            # "projects_search2": search_set2,
+            "projects_search" : res
         }
         return render(request, 'home_page.html', context)
     else:

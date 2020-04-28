@@ -10,8 +10,7 @@ app_name = 'users'
 urlpatterns = [
     path('', test, name='home'),
     path('register', register_view, name='register'),
-    url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/$',
-        activate, name='activate'),
+    path('activate/<uidb64>',activate, name='activate'),
     path('login', login_view, name='login'),
     path('logout', logout_view, name='logout'),
     path('projects', list_projects, name='projects'),

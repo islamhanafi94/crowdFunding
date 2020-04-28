@@ -27,9 +27,9 @@ class Projects(models.Model):
 
 class Tags(models.Model):
     name = models.CharField(max_length=50)
-
-    # def __str__(self):
-    #     return self.name
+    project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE,related_name="tags")
+    def __str__(self):
+        return self.project.title + " - " + self.name
 
 class Project_tags(models.Model):
     project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE)

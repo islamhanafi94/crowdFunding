@@ -168,27 +168,27 @@ hr {
                 </div>
               </div>
             </div>
-          {% endfor %}
+          {% endfor %}  
         {% else %}
+          <h1 class="subTitle"> {{NOdata}}</h1> 
+    <hr>
 
         {% endif %}
       </div>
     </div>
   </section>
-
+ 
   <!--end of search-->
+  {% if 'search' not in request.path %}
+
     <h1 class="subTitle">  Latest Projects</h1> 
     <hr>
-     {% comment %} {% if 'search' not in request.path %}
-        <div class="h1 text-center">Latest Five Projects</div>
-      {% endif %} {% endcomment %}
 
     <div class="row">
     {% if latestFiveList %}
         {% for p in latestFiveList %}
         {% if forloop.counter  != 2 and forloop.counter  <= 3 %}
             <div class="col-md-3 latestproject">
-          ss:  {{ p.pictures }}
                 <div class="card cardDes">
                     <img src="https://eitrawmaterials.eu/wp-content/uploads/2019/10/shutterstock_773293384-3.jpg" class="card-img-top projImg"> </a>
                     <div class="card-body">
@@ -224,8 +224,11 @@ hr {
             <h1>No Projects Available</h1>
           {% endif %}
     {% endif %}
+  {% endif %} 
     
     </div>
+
+{% if 'search' not in request.path %}
 
     <h1 class="subTitle"> Featured Projects</h1> 
     <hr>
@@ -234,7 +237,7 @@ hr {
         {% for fproject in featuredList %}
             <div class="fproject">
                 <div class="card cardDes">
-                    {% comment %} <img src="" class="card-img-top projImg"> </a> {% endcomment %}
+                    <img src="https://individuals.voya.com/sites/default/files/media/image/product-banner_fixed_income.png" class="card-img-top projImg"> </a>
                     <div class="card-body">
                       <h5 class="card-title">{{fproject.title }}</h5>
                       <p class="card-text desc">{{fproject.details }}</p>
@@ -243,6 +246,8 @@ hr {
             </div>
         {% endfor %}
     </div>  
+{%endif%}
+{% if 'search' not in request.path %}
 
        <h1 class="subTitle"> Our Categories </h1> 
     <hr>
@@ -255,6 +260,9 @@ hr {
             </div>
         {% endfor %}
     </div>
+{%endif%}
 
+
+ 
        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}

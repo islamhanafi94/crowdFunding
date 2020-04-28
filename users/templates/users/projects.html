@@ -79,18 +79,19 @@
 
           {% for field in project_form %}
             <label class="control-label" for="id_{{ field.name }}">{{ field.label }}</label>
-              <input type="text" class="form-control"
-                name="{{ field.name }}"
-                id="id_{{ field.name }}"
-                placeholder="{{field.label}}" >
+<!--              <input type="text" class="form-control"-->
+<!--                name="{{ field.name }}"-->
+<!--                id="id_{{ field.name }}"-->
+<!--                placeholder="{{field.label}}" >-->
+          <span id="id_{{ field.name }}"> {{ field }} </span><br>
           {% endfor %}
 
           {{ formset.management_form }}
+          {% image_form %}
           {% for form in formset %}
               {{ form }}
           {% endfor %}
 <!--          {%csrf_token%}-->
-<!--          {% bootstrap_form project_form %}-->
           <div class="modal-footer">
             {% buttons %}
               <button type="submit" class="btn btn-primary">

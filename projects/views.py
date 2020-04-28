@@ -128,6 +128,7 @@ def create_project(request):
     image_form_set = modelformset_factory(Project_pics,
                                           form=ImageForm, extra=5)
     if request.method == 'POST':
+        image_form = ImageForm()
         project_form = NewProject(request.POST)
         formset = image_form_set(request.POST, request.FILES,
                                  queryset=Project_pics.objects.none())
@@ -150,6 +151,7 @@ def create_project(request):
             print(project_form.errors, formset.errors)
     else:
         project_form = NewProject()
+        image_form = ImageForm()
         formset = image_form_set(queryset=Project_pics.objects.none())
-    return render(request, 'index.html',
-                  {'projectForm': project_form, 'formset': formset})
+    return render(request, 'test_page.html',
+                  {'projectForm': project_form, 'formset': formset, 'image_form': image_form})

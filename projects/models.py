@@ -22,7 +22,7 @@ class Projects(models.Model):
     total_target = models.IntegerField()
     start_date = models.DateField(auto_now=True)
     end_date = models.DateField(auto_now=False, auto_now_add=False)
-    rating = models.FloatField()
+    rating = models.FloatField(null=True)
     featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -57,8 +57,8 @@ class Project_pics(models.Model):
     project = models.ForeignKey('Projects', null=True, on_delete=models.CASCADE)
     pic = models.ImageField(upload_to=get_image_name, verbose_name='Project Image')
 
-    def __str__(self):
-        return str(self.pic)
+    # def __str__(self):
+    #     return str(self.pic)
 
 
 class Project_donations(models.Model):

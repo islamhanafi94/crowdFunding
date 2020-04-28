@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http.response import HttpResponse, JsonResponse, HttpResponseForbidden
+from django.http.response import HttpResponse, JsonResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.urls import reverse
+
 from users.models import Users
 from .models import *
 from django.contrib.auth.models import User
@@ -101,15 +103,8 @@ def search(request):
         elif search_tag_counter == 0:
             res = Projects.objects.filter(title=search_keyword)
         else:
-            res = ["No res"]   
-
-        # search_set = Projects.objects.filter(Q(title__icontains = search_keyword)|Q(project_tags__name__icontains = search_keyword)).distinct()
-        # search_set = Projects.objects.filter(Q(title__icontains = search_keyword))
-        # search_set2=Project_tags.objects.filter(Q(tag__name__icontains = search_keyword)).distinct()
-        #search_set = Project.objects.filter(tages__name__startswith = search_keyword)
+            res = ["No res"]
         context = {
-            # "projects_search": search_set,
-            # "projects_search2": search_set2,
             "projects_search" : res
         }
         return render(request, 'home_page.html', context)
@@ -128,34 +123,17 @@ def showCategoryProjects(request, cat_id):
 
 
 def create_project(request):
-    # image_form_set = modelformset_factory(Project_pics,
-    #                                       form=ImageForm, extra=5)
-    print(request)
     if request.method == 'POST':
-        # image_form = ImageForm()
         project_form = NewProject(request.POST)
-        # formset = image_form_set(request.POST, request.FILES,
-        #                          queryset=Project_pics.objects.none())
-        if project_form.is_valid():  # and formset.is_valid():
+        if project_form.is_valid():
             form = project_form.save(commit=False)
             form.user = request.user
-            # form.save()
-
-            # for form in formset.cleaned_data:
-            #     # this helps to not crash if the user
-            #     # do not upload all the photos
-            #     if form:
-            #         image = form['image']
-            #         photo = Project_pics(post=form, image=image)
-            #         photo.save()
-            # messages.success(request,
-            #                  "Yeeew, check it out on the home page!")
-            return HttpResponseRedirect("users/projects.html")
+            form.save()
+            for file in request.FILES.getlist('images'):
+                project_pic = Project_pics(project_id=form.id, pic=file).save()
+            return HttpResponseRedirect(reverse("users:projects"))
         else:
-            print(project_form.errors)  # , formset.errors)
+            print(project_form.errors)
     else:
         project_form = NewProject()
-        # image_form = ImageForm()
-        # formset = image_form_set(queryset=Project_pics.objects.none())
-    return render(request, "users/projects.html",
-                  {'project_form': project_form, })  # 'formset': formset, 'image_form': image_form})
+    return render(request, reverse("users:projects"), {'project_form': project_form, })

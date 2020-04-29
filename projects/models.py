@@ -63,8 +63,8 @@ class Project_pics(models.Model):
     pic = models.ImageField(upload_to=get_image_name,
                             verbose_name='Project Image')
 
-    # def __str__(self):
-    #     return str(self.pic)
+    def __str__(self):
+        return str(self.pic)
 
 
 class Project_donations(models.Model):

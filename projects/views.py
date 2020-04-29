@@ -27,8 +27,6 @@ from django.contrib import messages
 
 # http://127.0.0.1:8000/project/home
 # I Want to make this render the tamplate that in the root
-
-
 def home(request):
     projectRates = Project_rating.objects.all().values('project').annotate(
         Avg('rating')).order_by('-rating__avg')[:5]
@@ -54,14 +52,12 @@ def home(request):
 
 
 # http://127.0.0.1:8000/project/:id
-
-
 def project_page(res, id):
     project = Projects.objects.get(id=id)
     user = res.user.id
     donations = project.project_donations_set.all().aggregate(Sum("donation"))
-    user_rating_count = Project_rating.objects.filter(
-        project_id=id, user_id=user).count()
+    user_rating_count = Project_rating.objects.filter(project_id=id, user_id=user).count()
+    project_pics = project.project_pics_set.all()
     if user_rating_count:
         user_rating = Project_rating.objects.get(
             project_id=id, user_id=user).rating
@@ -75,18 +71,17 @@ def project_page(res, id):
             donations_flag = 1
     else:
         donations_flag = 1
-
+        
     context = {'project': project,
                'donations_flag': donations_flag,
-               'user_rate': user_rating
+               'user_rate': user_rating,
+               'pics': project_pics
                }
 
     return render(res, 'projects/project_page.html', context)
 
 
 # http://127.0.0.1:8000/project/:id/cancel
-
-
 def cancel_project(res, id):
     if res.method == "POST":
         user = res.user.id
@@ -94,7 +89,6 @@ def cancel_project(res, id):
         if not project:
             raise HttpResponseForbidden("Not Authorized")
         project.delete()
-        # return render(res, 'projects/test_page.html', {'test' : "canceled"} )
         return redirect(reverse('users:projects'))
 
 # http://127.0.0.1:8000/project/:id/rating/:rate
@@ -128,6 +122,7 @@ def search(request):
             res = Projects.objects.filter(title=search_keyword)
         else:
             res = ["No res"]
+            
         context = {
             "projects_search": res
         }

@@ -15,6 +15,8 @@ from users.models import Users
 import datetime
 from projects.models import Categories, Projects, Project_donations
 from projects.forms import NewProject
+from django.db.models import Q, Avg, Sum
+from django.template.defaulttags import register
 
 # Create your views here.
 
@@ -130,13 +132,35 @@ def list_projects(request):
     # get users's projects
     user_projects = Projects.objects.filter(user_id=request.user.id)
 
+    donations_flag = {}
+    donations = {}
+    for project in user_projects:
+        donation = project.project_donations_set.all().count()
+        total_raised = 0
+        don_flag = 1
+
+        if donation:
+            total_raised = project.project_donations_set.all(
+            ).aggregate(Sum("donation"))["donation__sum"]
+
+            if total_raised >= (project.total_target*0.25):
+                don_flag = 0
+        donations_flag[project.id] = don_flag
+        donations[project.id] = total_raised
+
     project_form = NewProject()
-    context = {"categories_list": categories_list,
-               "user_projects": user_projects,
+    context = {"user_projects": user_projects,
                "project_form": project_form,
+               "donations": donations,
+               "donations_flag": donations_flag,
                }
 
     return render(request, 'users/projects.html', context=context)
+
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
 
 
 def donations_list(request):
@@ -154,7 +178,7 @@ def user_profile_update(request):
             print("photo from form is :", form.cleaned_data['photo'])
             request.user.photo = form.cleaned_data['photo']
             form.save()
-            return redirect(reverse('users:profile'))
+            return redirect(reverse('users:projects'))
     else:
         form = UpdateUserForm(
             initial={

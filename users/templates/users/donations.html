@@ -19,15 +19,18 @@
         </tr>
         </thead>
         <tbody>
-
-        {% for donation in donations_list %}
+        {% for donation in user_donations %}
         <tr>
-            <td scope="row">12</td>
-            
+            <td scope="row">{{donation.id}}</td>
+            <td scope="row">{{donation.project}}</td>
+            <td scope="row">{{donation.project.category}}</td>
+            <td scope="row">{{donation.donation}}</td>
+            <td scope="row">{{donation.created_at}}</td>
+
         </tr>
         {% empty %}
         <tr>
-            <td colspan="5">No donations</td>
+            <td colspan="5">No Donations <td>
         </tr>
 
         {% endfor %}

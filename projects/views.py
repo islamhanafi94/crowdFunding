@@ -47,6 +47,7 @@ def project_page(res, id):
     user = res.user.id
     donations = project.project_donations_set.all().aggregate(Sum("donation"))
     user_rating_count = Project_rating.objects.filter(project_id=id, user_id=user).count()
+    project_pics = project.project_pics_set.all()
     if user_rating_count:
         user_rating = Project_rating.objects.get(project_id=id, user_id=user).rating
     else:
@@ -59,10 +60,11 @@ def project_page(res, id):
             donations_flag = 1
     else:
         donations_flag = 1
-
+        
     context = {'project': project,
                'donations_flag': donations_flag,
-               'user_rate': user_rating
+               'user_rate': user_rating,
+               'pics': project_pics
                }
 
     return render(res, 'projects/project_page.html', context)
@@ -87,6 +89,7 @@ def project_rating(res, id, rate):
         project_rating = project.project_rating_set.all().aggregate(Avg("rating"))["rating__avg"]
         Projects.objects.update_or_create(id=id,defaults={'rating': project_rating})
         return redirect('project_page', id=id)
+
 
 
 def search(request):

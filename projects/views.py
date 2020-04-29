@@ -109,7 +109,7 @@ def search(request):
         }
         return render(request, 'home_page.html', context)
     else:
-        return render(request, 'home_page.html', {"NOdata": "There is No such a tag or title matched our projects Plz try Again"})
+        return render(request, 'home_page.html', {"NOdata": " your search key word doesn't match any projects !"})
 
 
 def showCategoryProjects(request, cat_id):

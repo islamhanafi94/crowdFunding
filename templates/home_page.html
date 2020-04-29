@@ -8,6 +8,30 @@
 {% bootstrap_javascript jquery='full' %}
 {% block content %}
 <style>
+/* The alert message box */
+.alert {
+  padding: 20px;
+  background-color: #f44336; /* Red */
+  color: white;
+  margin-bottom: 15px;
+}
+
+/* The close button */
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+  color: black;
+}
 .slideCss {
     width: 100%;
     height: 380px;
@@ -76,30 +100,6 @@ hr {
     max-height: 60px;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-/* The alert message box */
-.alert {
-  padding: 20px;
-  background-color: #f44336; /* Red */
-  color: white;
-  margin-bottom: 15px;
-}
-
-/* The close button */
-.closebtn {
-  margin-left: 15px;
-  color: white;
-  font-weight: bold;
-  float: right;
-  font-size: 22px;
-  line-height: 20px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-/* When moving the mouse over the close button */
-.closebtn:hover {
-  color: black;
 }
 </style>
     <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
@@ -194,10 +194,14 @@ hr {
             </div>
           {% endfor %}  
         {% else %}
-      <div class="alert">
-  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-  your search key word doesn't match any projects !
-</div>
+  {% if 'search'  in request.path %}
+        
+        <div class="alert">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+         your search key word doesn't match any projects !
+        </div>    
+  {% endif %}
+
         {% endif %}
       </div>
     </div>

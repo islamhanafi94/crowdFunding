@@ -1,14 +1,4 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from users.models import Users
-from .models import *
-from django.contrib.auth.models import User
-
-from django.db.models import Avg, Sum
-import datetime
-from django.contrib import messages
-
-from decimal import Decimal, ROUND_HALF_UP
-from django.db.models import Q, Avg, Sum
 from django.http.response import HttpResponse, JsonResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.urls import reverse
 
@@ -59,13 +49,12 @@ def project_page(res, id):
     user_rating_count = Project_rating.objects.filter(project_id=id, user_id=user).count()
     project_pics = project.project_pics_set.all()
     if user_rating_count:
-        user_rating = Project_rating.objects.get(
-            project_id=id, user_id=user).rating
+        user_rating = Project_rating.objects.get(project_id=id, user_id=user).rating
     else:
         user_rating = 0
 
     if donations["donation__sum"]:
-        if donations["donation__sum"] >= (project.total_target * 0.25):
+        if donations["donation__sum"] >= (project.total_target*0.25):
             donations_flag = 0
         else:
             donations_flag = 1
@@ -92,14 +81,12 @@ def cancel_project(res, id):
         return redirect(reverse('users:projects'))
 
 # http://127.0.0.1:8000/project/:id/rating/:rate
-
 def project_rating(res, id, rate):
     if res.method == "POST":
         user = res.user.id
         project = Projects.objects.get(id=id)
         Project_rating.objects.update_or_create(project_id=id, user_id=user, defaults={'rating': rate})        
         project_rating = project.project_rating_set.all().aggregate(Avg("rating"))["rating__avg"]
-
         Projects.objects.update_or_create(id=id,defaults={'rating': project_rating})
         return redirect('project_page', id=id)
 
@@ -109,9 +96,6 @@ def search(request):
     if request.GET.get("search"):
         res = []
         search_keyword = request.GET.get("search")
-
-        search_set = Projects.objects.filter(
-            Q(title__icontains=search_keyword) | Q(tags__name__icontains=search_keyword)).distinct()
         search_tag_counter = Tags.objects.filter(name=search_keyword).count()
         if search_tag_counter:
             search_tag = Tags.objects.get(name=search_keyword)
@@ -128,97 +112,7 @@ def search(request):
         }
         return render(request, 'home_page.html', context)
     else:
-        return render(request, 'home_page.html',
-                      {"NOdata": "There is No such a tag or title matched our projects Plz try Again"})
-
-
-def project(request, project_id):
-    images = []
-    try:
-        project = Projects.objects.get(id=project_id)
-        pics = Project_pics.objects.filter(project_id=project_id)
-        for i in pics:
-            pics.append(i.pic)
-        project_all_tags = Project_tags.objects.filter(
-            project_id=project_id).values_list("tag", flat=True)
-        test_list = list(project_all_tags)
-        related_projects_id = Project_tags.objects.filter(tag__in=test_list).distinct(
-        ).exclude(project_id=project_id).values_list("project", flat=True)[:5]
-        related_projects_data = Projects.objects.filter(
-            id__in=list(related_projects_id))
-
-        # get project comments
-        comments = Project_comments.objects.filter(project_id=project_id)
-        if 'logged_in_user' in request.session:
-            if request.session['logged_in_user'] == project.user_id:
-                project_owner = True
-            else:
-                project_owner = False
-        else:
-            project_owner = False
-
-        is_ended = True if project.end_date < datetime.date.today() else False
-
-        is_completed = True if project.current_money >= project.target else False
-        context = {
-            "pics": images,
-            "Projects": project,
-            "comments": comments,
-            "related_projects_list": related_projects_data,
-            "owner": project_owner,
-            "is_ended": is_ended,
-            "is_completed": is_completed
-        }
-
-    except Projects.DoesNotExist:
-        return redirect(f'/project/error')
-    return render(request, 'projects/project_page.html', context)
-
-
-def donate(request, project_id):
-    if request.method == 'POST':
-        try:
-            donating_value = int(request.POST.get('donation_value'))
-            project = Projects.objects.get(id=project_id)
-            project.current_money += donating_value
-            if project.current_money <= project.target:
-                project.save()
-                Project_donations.objects.create(
-                    project=project,
-                    user=Users.objects.get(user_id=request.session['logged_in_user']),
-                    value=donating_value
-                )
-                messages.success(request, 'Your Donation done successfully!', extra_tags='donate')
-                return redirect(f"/project/{project_id}")
-            else:
-                messages.error(request, 'Your Donation failed', extra_tags='donate')
-                return redirect(f"/project/{project_id}")
-        except:
-            messages.error(request, 'Please login first!!!', extra_tags='donate')
-            return redirect(f"/project/{project_id}")
-    else:
-        return redirect(f"/project/{project_id}")
-
-
-def comment(request, project_id):
-    if request.method == 'POST':
-        try:
-            project = Projects.objects.get(id=project_id)
-            comment = request.POST.get('comment')
-            if len(comment) > 0:
-                Project_comments.objects.create(
-                    project=project,
-                    comment=comment,
-                    comment_user_id=request.session['logged_in_user']
-                )
-                return redirect(f"/project/{project_id}")
-            else:
-                return redirect(f"/project/{project_id}")
-        except:
-            messages.error(request, 'Please login first!!!', extra_tags='comment')
-            return redirect(f"/project/{project_id}")
-    else:
-        return redirect(f"/project/{project_id}")
+        return render(request, 'home_page.html', {"NOdata": " your search key word doesn't match any projects !"})
 
 
 def showCategoryProjects(request, cat_id):

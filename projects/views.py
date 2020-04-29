@@ -7,7 +7,7 @@ from .models import *
 from django.contrib.auth.models import User
 from decimal import Decimal, ROUND_HALF_UP
 from django.db.models import Q, Avg, Sum
-from .forms import NewProject, ImageForm
+from .forms import NewProject, ImageForm, Report
 from django.forms import modelformset_factory
 from django.contrib import messages
 
@@ -137,3 +137,24 @@ def create_project(request):
     else:
         project_form = NewProject()
     return render(request, reverse("users:projects"), {'project_form': project_form, })
+
+
+def report(request):
+    context = {}
+    if request.method == 'POST':
+        report_form = Report(request.POST)
+        if report_form.is_valid():
+            form = report_form.save(commit=False)
+            form.user = request.user
+            # if request.POST['comment']:
+            #     form.Comment = request.POST['comment']
+            # elif request.POST['project']:
+            #     form.project = request.POST['project']
+            form.save()
+            return HttpResponseRedirect(reverse("project:project_page"))
+        else:
+            print(report_form.errors)
+    else:
+        report_form = Report()
+    context['report_form'] = report_form
+    return render(request, reverse("project:project_page"), context)

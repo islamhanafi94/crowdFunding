@@ -1,5 +1,4 @@
 {% load static %}
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,10 +10,11 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"> 
     <link rel="stylesheet" type="text/css" href="{% static 'css/rating.css' %}">
 </head>
- {% if request.user.is_authenticated %}
+{% if request.user.is_authenticated %}
          
  
 <body>
+
     {{ project.title }}
     {{ project.details }}
     
@@ -23,6 +23,21 @@
         <form action="{% url 'projects:cancel_project' project.id %}" method="post">
             {% csrf_token %}
             <input type="submit" value="cancel" class="btn btn-danger">
+        </form>
+    {% endif %}
+
+    {% if donations_flag %}
+        <form method="post" action="{% url 'projects:report' project.id%}">
+          {% csrf_token %}
+
+          {% bootstrap_form report_form %}
+
+          <input type="hidden" name="project" value="{{ project.id }}">
+            {% buttons %}
+              <button type="submit" class="btn btn-primary">
+                Submit
+              </button>
+            {% endbuttons %}
         </form>
     {% endif %}
     
@@ -85,6 +100,7 @@
                 });
             }; 
     </script>
+
 </body>
    {% else %}
         You are not Authnticated        

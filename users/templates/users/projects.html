@@ -70,20 +70,22 @@
         </button>
       </div>
       <div class="modal-body">
-        <form method="post" enctype="multipart/form-data">
-          {%csrf_token%}
-          {% bootstrap_form project_form %}
-          {% buttons %}
-            <button type="submit" class="btn btn-primary">
-              Submit
-            </button>
-          {% endbuttons %}
-      <form>
+        <form method="post" action="{% url 'projects:new_project' %}" enctype="multipart/form-data">
+          {% csrf_token %}
 
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+          {% bootstrap_form project_form %}
+
+          <input type="file" name="images" multiple>
+
+          <div class="modal-footer">
+            {% buttons %}
+              <button type="submit" class="btn btn-primary">
+                Submit
+              </button>
+            {% endbuttons %}
+          </div>
+
+        </form>
       </div>
     </div>
   </div>

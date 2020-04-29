@@ -1,4 +1,4 @@
-{% load static %} 
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,7 +19,7 @@
     {% if donations_flag %}
         <form action="{% url 'cancel_project' project.id %}" method="post">
             {% csrf_token %}
-            <input type="submit" value="cancel">
+            <input type="submit" value="cancel" class="btn btn-danger">
         </form>
     {% endif %}
     

@@ -1,8 +1,11 @@
 from django.urls import path
 from . import views
 
+app_name = 'projects'
+
 urlpatterns = [
     # path('home', home, name='all_projects'),
+    path('new', views.create_project, name='new_project'),
     path('<int:id>', views.project_page, name='project_page'),
     path('<int:project_id>/donate/', views.donate, name='donate'),
     path('<int:project_id>/comment/', views.comment, name='comment'),

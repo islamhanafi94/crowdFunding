@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"> 
     <link rel="stylesheet" type="text/css" href="{% static 'css/rating.css' %}">
 </head>
+ {% if request.user.is_authenticated %}
+         
+ 
 <body>
 
     <div id="carouselExampleInterval" class="carousel slide" data-ride="carousel">
@@ -109,4 +112,7 @@
             }; 
     </script>
 </body>
+   {% else %}
+        You are not Authnticated        
+    {% endif %}
 </html>

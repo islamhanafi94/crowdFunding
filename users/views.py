@@ -67,7 +67,7 @@ def activate(request, uidb64, time):
                                              "%Y-%m-%d %H:%M:%S.%f")
             ).seconds / 60
 
-            if date_diffrince < 1:
+            if date_diffrince < (24 * 60):
                 user.is_active = True
                 user.save()
                 return render(
@@ -235,7 +235,7 @@ def delete_account(request, uidb64, time):
             - datetime.datetime.strptime(email_sent_at, "%Y-%m-%d %H:%M:%S.%f")
         ).seconds / 60
 
-        if date_diffrince < 1:
+        if date_diffrince < (24 * 60):
             user.delete()
             logout(request)
             return render(

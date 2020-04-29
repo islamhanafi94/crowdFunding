@@ -26,13 +26,20 @@
         {% for project in category_projects %}
           <div class="col-sm-4 mt-5">
             <div class="card" style="width: 18rem;">
-              <img src="/media/projects/images/managment.jpg" class="card-img-top" style="width:100%; height:100px;">
+            <a href= "{% url 'projects:project_page' project.id %}">  <img src="/media/projects/images/managment.jpg" class="card-img-top" style="width:100%; height:100px;"></a>
               <div class="card-body">
                 <h5 class="card-title">{{project.title}}</h5>
                 <p class="card-text">{{project.details}}</p>
-                  <h5>Rate : {{project.rating}} </h5>
-                {% comment %} <a href="{% url 'show_project' project.id %}" class="btn btn-success">Donate</a> {% endcomment %}
-              </div>
+   <div style="width:auto" class="stars">
+        <h3 class="card-title"> Project Rate {{ project.rating }} </h3>
+        {% for i in '01234'|make_list %}
+            {% if project.rating >= forloop.counter %}
+                <span class="fa fa-star checked"></span>
+            {% else %}
+                <span class="fa fa-star "></span>
+            {% endif %}
+        {% endfor%}
+    </div>              </div>
             </div>
           </div>
         {% endfor %}
@@ -43,4 +50,10 @@
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   </body>
 </html>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"> 
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"> 
+    <link rel="stylesheet" type="text/css" href="{% static 'css/rating.css' %}">
+
+
 {%endblock%}

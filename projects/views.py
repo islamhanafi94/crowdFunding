@@ -47,6 +47,7 @@ def project_page(res, id):
     user = res.user.id
     donations = project.project_donations_set.all().aggregate(Sum("donation"))
     user_rating_count = Project_rating.objects.filter(project_id=id, user_id=user).count()
+    project_pics = project.project_pics_set.all()
     if user_rating_count:
         user_rating = Project_rating.objects.get(project_id=id, user_id=user).rating
     else:
@@ -59,10 +60,12 @@ def project_page(res, id):
             donations_flag = 1
     else:
         donations_flag = 1
-
+        
     context = {'project': project,
                'donations_flag': donations_flag,
-               'user_rate': user_rating
+               'user_rate': user_rating,
+               'pics': project_pics,
+               'report_form': Report()
                }
 
     return render(res, 'projects/project_page.html', context)
@@ -87,6 +90,7 @@ def project_rating(res, id, rate):
         project_rating = project.project_rating_set.all().aggregate(Avg("rating"))["rating__avg"]
         Projects.objects.update_or_create(id=id,defaults={'rating': project_rating})
         return redirect('project_page', id=id)
+
 
 
 def search(request):
@@ -139,19 +143,24 @@ def create_project(request):
     return render(request, reverse("users:projects"), {'project_form': project_form, })
 
 
-def report(request):
+def report(request, project_id):
     context = {}
     if request.method == 'POST':
         report_form = Report(request.POST)
         if report_form.is_valid():
-            form = report_form.save(commit=False)
-            form.user = request.user
+            new_report = report_form.save(commit=False)
+            new_report.user = request.user
+            if 'comment' not in request.POST:
+                new_report.project = Projects.objects.get(pk=request.POST['project'])
+            else:
+                new_report.Comment = Project_comments.objects.get(pk=request.POST['comment'])
+
             # if request.POST['comment']:
-            #     form.Comment = request.POST['comment']
+            #     new_report.Comment = request.POST['comment']
             # elif request.POST['project']:
-            #     form.project = request.POST['project']
-            form.save()
-            return HttpResponseRedirect(reverse("project:project_page"))
+            #     new_report.project = request.POST['project']
+            new_report.save()
+            return HttpResponseRedirect(reverse("projects:project_page", args=[project_id]))
         else:
             print(report_form.errors)
     else:

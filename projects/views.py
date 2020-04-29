@@ -17,8 +17,6 @@ from django.contrib import messages
 
 # http://127.0.0.1:8000/project/home
 # I Want to make this render the tamplate that in the root
-
-
 def home(request):
     projectRates = Project_rating.objects.all().values('project').annotate(
         Avg('rating')).order_by('-rating__avg')[:5]
@@ -44,14 +42,11 @@ def home(request):
 
 
 # http://127.0.0.1:8000/project/:id
-
-
 def project_page(res, id):
     project = Projects.objects.get(id=id)
     user = res.user.id
     donations = project.project_donations_set.all().aggregate(Sum("donation"))
-    user_rating_count = Project_rating.objects.filter(
-        project_id=id, user_id=user).count()
+    user_rating_count = Project_rating.objects.filter(project_id=id, user_id=user).count()
     if user_rating_count:
         user_rating = Project_rating.objects.get(project_id=id, user_id=user).rating
     else:
@@ -74,8 +69,6 @@ def project_page(res, id):
 
 
 # http://127.0.0.1:8000/project/:id/cancel
-
-
 def cancel_project(res, id):
     if res.method == "POST":
         user = res.user.id
@@ -83,12 +76,9 @@ def cancel_project(res, id):
         if not project:
             raise HttpResponseForbidden("Not Authorized")
         project.delete()
-        # return render(res, 'projects/test_page.html', {'test' : "canceled"} )
         return redirect(reverse('users:projects'))
 
 # http://127.0.0.1:8000/project/:id/rating/:rate
-
-
 def project_rating(res, id, rate):
     if res.method == "POST":
         user = res.user.id
@@ -113,6 +103,7 @@ def search(request):
             res = Projects.objects.filter(title=search_keyword)
         else:
             res = ["No res"]
+            
         context = {
             "projects_search": res
         }

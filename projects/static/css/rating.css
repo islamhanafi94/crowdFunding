@@ -10,7 +10,7 @@ input.star {
 label.star {
     float: right;
     padding: 10px;
-    font-size: 36px;
+    font-size: 20px;
     color: #444;
     transition: all 0.2s;
 }
@@ -43,5 +43,5 @@ label.star:before {
     color: orange;
 }
 .fa  {
-    font-size: 50px !important;
+    font-size: 20px !important;
 }

@@ -26,7 +26,7 @@
         {% for project in category_projects %}
           <div class="col-sm-4 mt-5">
             <div class="card" style="width: 18rem;">
-              <img src="/media/projects/images/managment.jpg" class="card-img-top" style="width:100%; height:100px;">
+            <a href= "{% url 'projects:project_page' project.id %}">  <img src="/media/projects/images/managment.jpg" class="card-img-top" style="width:100%; height:100px;"></a>
               <div class="card-body">
                 <h5 class="card-title">{{project.title}}</h5>
                 <p class="card-text">{{project.details}}</p>

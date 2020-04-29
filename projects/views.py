@@ -54,18 +54,21 @@ def project_page(res, id):
         user_rating = 0
 
     if donations["donation__sum"]:
+        project_donation = donations["donation__sum"]
         if donations["donation__sum"] >= (project.total_target*0.25):
             donations_flag = 0
         else:
             donations_flag = 1
     else:
         donations_flag = 1
+        project_donation = 0
         
     context = {'project': project,
                'donations_flag': donations_flag,
                'user_rate': user_rating,
                'pics': project_pics,
-               'report_form': Report()
+               'report_form': Report(),
+               'donations': project_donation
                }
 
     return render(res, 'projects/project_page.html', context)

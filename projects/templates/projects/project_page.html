@@ -6,7 +6,6 @@
 {% block content %}
 
 {% if request.user.is_authenticated %}
-
 <div id="carouselExampleInterval" class="carousel slide" data-ride="carousel">
   <div class="carousel-inner">
     {% for pic in pics %}
@@ -29,23 +28,6 @@
     <span class="carousel-control-next-icon" aria-hidden="true"></span>
     <span class="sr-only">Next</span>
   </a>
-</div>
-
-
-{% if donations_flag %}
-<form action="{% url 'projects:cancel_project' project.id %}" method="post">
-  {% csrf_token %}
-  <input type="submit" value="cancel" class="btn btn-danger">
-</form>
-{% endif %}
-
-<div class="btn-group mr-2" role="group" aria-label="First group">
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".report-project-modal">Report Project
-  </button>
-</div>
-<div class="btn-group mr-2" role="group" aria-label="First group">
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".report-comment-modal">Report Comment
-  </button>
 </div>
 
 <div class="modal fade report-project-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
@@ -78,31 +60,6 @@
   </div>
 </div>
 
-<div style="width:auto" class="stars">
-  <br>
-  <h3>Your Rate </h3>
-  {{user_rate}}
-  <form action="">
-    {% for i in '54321'|make_list %}
-    <input class="star star-{{i}}" id="star-{{i}}" type="radio" name="star"
-           onchange="onRateChange({{ project.id }}, {{i}})" {% if i|add:"0" == user_rate %} checked {% endif %} />
-    <label class="star star-{{i}}" for="star-{{i}}"></label>
-    {% endfor%}
-  </form>
-</div>
-
-<div style="width:auto" class="stars">
-  <h3 class="card-title"> Project Rate {{ project.rating }} </h3>
-  {% for i in '01234'|make_list %}
-  {% if project.rating >= forloop.counter %}
-  <span class="fa fa-star checked"></span>
-  {% else %}
-  <span class="fa fa-star "></span>
-  {% endif %}
-  {% endfor%}
-</div>
-
-
 <div class="modal fade report-comment-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
      aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -133,6 +90,63 @@
   </div>
 </div>
 
+<div class="container">
+    <div class="d-flex  align-items-top">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item h4">Title : {{ project.title }}</li>
+            <li class="list-group-item h4">Owner : {{ project.user.first_name}} {{project.user.last_name}}</li>
+            <li class="list-group-item h4">Category : {{ project.category }}</li>
+            <li class="list-group-item h4">Target : {{ project.total_target }} L.E</li>
+            <li class="list-group-item h4">Total Raised : {{ donations }} L.E</li>
+            <li class="list-group-item h4">End Date : {{ project.end_date }}</li>
+            <li class="list-group-item h4">Rating :
+                <div style="width:auto" class="stars">
+                    {% for i in '01234'|make_list %}
+                    {% if project.rating >= forloop.counter %}
+                    <span class="fa fa-star checked"></span>
+                    {% else %}
+                    <span class="fa fa-star "></span>
+                    {% endif %}
+                    {% endfor%}
+                </div>
+            </li>
+        </ul>
+    </div>
+    <hr>
+        <h3>Project Details: </h3>
+        <p class="text-md-left h5">{{project.details}}</p>
+        {%if request.user.id == project.user.id %}
+            {% if donations_flag %}
+                <form action="{% url 'projects:cancel_project' project.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="cancel" class="btn btn-danger">
+                </form>
+            {% endif %}
+        {% endif %}
+        <br>
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".report-project-modal">Report Project
+          </button>
+        </div>
+        <br> <br>
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".report-comment-modal">Report Comment
+          </button>
+        </div>
+    <hr>
+<hr>
+
+<div style="width:auto" class="stars">
+    <br>
+    <h3>Enter Your Rate: </h3>
+    <form action="">
+        {% for i in '54321'|make_list %}
+        <input class="star star-{{i}}" id="star-{{i}}" type="radio" name="star"
+            onchange="onRateChange({{ project.id }}, {{i}})" {% if i|add:"0" == user_rate %} checked {% endif %} />
+        <label class="star star-{{i}}" for="star-{{i}}"></label>
+        {% endfor%}
+    </form>
+</div>
 {% else %}
 You are not Authnticated
 {% endif %}

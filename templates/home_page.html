@@ -77,6 +77,30 @@ hr {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+/* The alert message box */
+.alert {
+  padding: 20px;
+  background-color: #f44336; /* Red */
+  color: white;
+  margin-bottom: 15px;
+}
+
+/* The close button */
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+  color: black;
+}
 </style>
     <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
     {% if highRatedProjects %}
@@ -170,9 +194,10 @@ hr {
             </div>
           {% endfor %}  
         {% else %}
-          <h1 class="subTitle"> {{NOdata}}</h1> 
-    <hr>
-
+      <div class="alert">
+  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+  your search key word doesn't match any projects !
+</div>
         {% endif %}
       </div>
     </div>

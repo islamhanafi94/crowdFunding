@@ -15,6 +15,8 @@ from users.models import Users
 import datetime
 from projects.models import Categories, Projects, Project_donations
 from projects.forms import NewProject
+from django.db.models import Q, Avg, Sum
+from django.template.defaulttags import register
 
 # Create your views here.
 
@@ -61,7 +63,8 @@ def activate(request, uidb64, time):
             email_sent_at = time_sent
             date_diffrince = (
                 datetime.datetime.now()
-                - datetime.datetime.strptime(email_sent_at, "%Y-%m-%d %H:%M:%S.%f")
+                - datetime.datetime.strptime(email_sent_at,
+                                             "%Y-%m-%d %H:%M:%S.%f")
             ).seconds / 60
 
             if date_diffrince < 1:
@@ -137,18 +140,39 @@ def send_email(user, current_site, email, email_body, email_subject):
 
 def list_projects(request):
     # get all categories
-    categories_list = Categories.objects.all()
+    # categories_list = Categories.objects.all()
     # get users's projects
     user_projects = Projects.objects.filter(user_id=request.user.id)
 
+    donations_flag = {}
+    donations = {}
+    for project in user_projects:
+        donation = project.project_donations_set.all().count()
+        total_raised = 0
+        don_flag = 1
+
+        if donation:
+            total_raised = project.project_donations_set.all(
+            ).aggregate(Sum("donation"))["donation__sum"]
+
+            if total_raised >= (project.total_target*0.25):
+                don_flag = 0
+        donations_flag[project.id] = don_flag
+        donations[project.id] = total_raised
+
     project_form = NewProject()
-    context = {
-        "categories_list": categories_list,
-        "user_projects": user_projects,
-        "project_form": project_form,
-    }
+    context = {"user_projects": user_projects,
+               "project_form": project_form,
+               "donations": donations,
+               "donations_flag": donations_flag,
+               }
 
     return render(request, "users/projects.html", context=context)
+
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
 
 
 def donations_list(request):

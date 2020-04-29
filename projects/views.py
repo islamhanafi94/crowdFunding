@@ -26,7 +26,9 @@ from django.contrib import messages
 # Create your views here.
 
 # http://127.0.0.1:8000/project/home
-# I Want to make this render the tamplate that in the root 
+# I Want to make this render the tamplate that in the root
+
+
 def home(request):
     projectRates = Project_rating.objects.all().values('project').annotate(
         Avg('rating')).order_by('-rating__avg')[:5]
@@ -52,6 +54,8 @@ def home(request):
 
 
 # http://127.0.0.1:8000/project/:id
+
+
 def project_page(res, id):
     project = Projects.objects.get(id=id)
     user = res.user.id
@@ -81,6 +85,8 @@ def project_page(res, id):
 
 
 # http://127.0.0.1:8000/project/:id/cancel
+
+
 def cancel_project(res, id):
     if res.method == "POST":
         user = res.user.id
@@ -88,19 +94,21 @@ def cancel_project(res, id):
         if not project:
             raise HttpResponseForbidden("Not Authorized")
         project.delete()
-        return render(res, 'projects/test_page.html', {'test': "canceled"})
+        # return render(res, 'projects/test_page.html', {'test' : "canceled"} )
+        return redirect(reverse('users:projects'))
 
+# http://127.0.0.1:8000/project/:id/rating/:rate
 
 def project_rating(res, id, rate):
     if res.method == "POST":
         user = res.user.id
         project = Projects.objects.get(id=id)
-        Project_rating.objects.update_or_create(project_id=id, user_id=user, rating=rate)
+        Project_rating.objects.update_or_create(project_id=id, user_id=user, defaults={'rating': rate})        
         project_rating = project.project_rating_set.all().aggregate(Avg("rating"))["rating__avg"]
-        project_rating = Decimal(project_rating).quantize(0, ROUND_HALF_UP)
-        project.update_or_create(rating=project_rating)
 
-        return render(res, 'projects/test_page.html', {'test': "rated"})
+        Projects.objects.update_or_create(id=id,defaults={'rating': project_rating})
+        return redirect('project_page', id=id)
+
 
 
 def search(request):

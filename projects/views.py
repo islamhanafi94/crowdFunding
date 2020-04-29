@@ -1,10 +1,22 @@
+<<<<<<< HEAD
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.http.response import HttpResponse, JsonResponse, HttpResponseForbidden, HttpResponseRedirect
+=======
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http.response import HttpResponse, JsonResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.urls import reverse
+
+>>>>>>> 94fdfba508224b68b363c4cd972ea94e787bb4c7
 from users.models import Users
 from .models import *
 from django.contrib.auth.models import User
 from decimal import Decimal, ROUND_HALF_UP
 from django.db.models import Q, Avg, Sum
+from .forms import NewProject, ImageForm
+from django.forms import modelformset_factory
+from django.contrib import messages
+
+
 # Create your views here.
 # Create your views here.
 
@@ -35,6 +47,7 @@ def home(request):
     }
     return render(request, 'home_page.html', context)
 
+
 # http://127.0.0.1:8000/project/:id
 
 
@@ -64,6 +77,7 @@ def project_page(res, id):
 
     return render(res, 'projects/project_page.html', context)
 
+
 # http://127.0.0.1:8000/project/:id/cancel
 
 
@@ -74,16 +88,24 @@ def cancel_project(res, id):
         if not project:
             raise HttpResponseForbidden("Not Authorized")
         project.delete()
+<<<<<<< HEAD
         # return render(res, 'projects/test_page.html', {'test' : "canceled"} )
         return redirect(reverse('users:projects'))
 
 # http://127.0.0.1:8000/project/:id/rating/:rate
 
 
+=======
+        return render(res, 'projects/test_page.html', {'test': "canceled"})
+
+
+
+>>>>>>> 94fdfba508224b68b363c4cd972ea94e787bb4c7
 def project_rating(res, id, rate):
     if res.method == "POST":
         user = res.user.id
         project = Projects.objects.get(id=id)
+<<<<<<< HEAD
         Project_rating.objects.update_or_create(
             project_id=id, user_id=user, defaults={'rating': rate})
         project_rating = project.project_rating_set.all().aggregate(Avg("rating"))[
@@ -93,24 +115,43 @@ def project_rating(res, id, rate):
         print('befor')
         return redirect('project_page', id=id)
 
+=======
+        Project_rating.objects.update_or_create(project_id=id, user_id=user, rating=rate)
+        project_rating = project.project_rating_set.all().aggregate(Avg("rating"))["rating__avg"]
+        project_rating = Decimal(project_rating).quantize(0, ROUND_HALF_UP)
+        project.update_or_create(rating=project_rating)
+        return render(res, 'projects/test_page.html', {'test' : "rated"})
+>>>>>>> 94fdfba508224b68b363c4cd972ea94e787bb4c7
 
 def search(request):
     if request.GET.get("search"):
+        res = []
         search_keyword = request.GET.get("search")
+<<<<<<< HEAD
         # search_set = Projects.objects.filter(Q(title__icontains = search_keyword)|Q(project_tags__name__icontains = search_keyword)).distinct()
         search_set = Projects.objects.filter(
             Q(title__icontains=search_keyword))
         search_set2 = Project_tags.objects.filter(
             Q(tag__name__icontains=search_keyword)).distinct()
         #search_set = Project.objects.filter(tages__name__startswith = search_keyword)
+=======
+        search_tag_counter = Tags.objects.filter(name=search_keyword).count()
+        if search_tag_counter:
+            search_tag = Tags.objects.get(name=search_keyword)
+            search_set = Project_tags.objects.filter(tag_id=search_tag.id)
+            for project in search_set:
+                res.append(Projects.objects.get(id=project.project_id))
+        elif search_tag_counter == 0:
+            res = Projects.objects.filter(title=search_keyword)
+        else:
+            res = ["No res"]
+>>>>>>> 94fdfba508224b68b363c4cd972ea94e787bb4c7
         context = {
-            "projects_search": search_set,
-            "projects_search2": search_set2,
-
+            "projects_search" : res
         }
         return render(request, 'home_page.html', context)
-
     else:
+<<<<<<< HEAD
         return render(request, 'home_page.html', context)
 
 
@@ -121,6 +162,9 @@ def showPic(request, id):
 
     }
     return render(request, 'home_page.html', context)
+=======
+        return render(request, 'home_page.html',{"NOdata":"There is No such a tag or title matched our projects Plz try Again"})
+>>>>>>> 94fdfba508224b68b363c4cd972ea94e787bb4c7
 
 
 def showCategoryProjects(request, cat_id):
@@ -131,3 +175,20 @@ def showCategoryProjects(request, cat_id):
         'category_projects': category_projects
     }
     return render(request, "viewCategory.html", context)
+
+
+def create_project(request):
+    if request.method == 'POST':
+        project_form = NewProject(request.POST)
+        if project_form.is_valid():
+            form = project_form.save(commit=False)
+            form.user = request.user
+            form.save()
+            for file in request.FILES.getlist('images'):
+                project_pic = Project_pics(project_id=form.id, pic=file).save()
+            return HttpResponseRedirect(reverse("users:projects"))
+        else:
+            print(project_form.errors)
+    else:
+        project_form = NewProject()
+    return render(request, reverse("users:projects"), {'project_form': project_form, })

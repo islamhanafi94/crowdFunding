@@ -33,12 +33,14 @@ def register_view(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.save()
-            send_email(user, get_current_site(request),
-                       form.cleaned_data.get("email"))
-            return HttpResponse(
-                "Please confirm your email address to complete the registration"
+            send_email(
+                user,
+                get_current_site(request),
+                form.cleaned_data.get("email"),
+                "users/acc_active_email.html",
+                "Activate your account.",
             )
-
+            return render(request, "users/signup_link_email.html", {"active_code": -1})
         else:
             context["form"] = form
     else:
@@ -47,35 +49,46 @@ def register_view(request):
     return render(request, "users/register.html", context)
 
 
-def activate(request, uidb64):
+def activate(request, uidb64, time):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
+        print("user id : ", uid)
+        time_sent = force_text(urlsafe_base64_decode(time))
         user = Users.objects.get(pk=uid)
+
     except (TypeError, ValueError, OverflowError):
         user = None
     if user is not None:
         if user.is_active == False:
-            date_joined = user.date_joined.replace(tzinfo=None)
-            date_diffrince = (datetime.datetime.now() -
-                              date_joined).seconds / 60
+            email_sent_at = time_sent
+            date_diffrince = (
+                datetime.datetime.now()
+                - datetime.datetime.strptime(email_sent_at, "%Y-%m-%d %H:%M:%S.%f")
+            ).seconds / 60
 
-            if date_diffrince < (60*24):
+            if date_diffrince < 1:
                 user.is_active = True
                 user.save()
-                return HttpResponse(
-                    "Thank you for your email confirmation. Now you can login your account."
+                return render(
+                    request, "users/signup_link_email.html", {"active_code": 1}
                 )
             else:
                 current_site = get_current_site(request)
                 email = user.email
-                send_email(user, current_site, email)
-                user.date_joined = datetime.datetime.now()
-                user.save()
-                return HttpResponse("activation link is valid for five minutes only...")
+                send_email(
+                    user,
+                    current_site,
+                    email,
+                    "users/acc_active_email.html",
+                    "Activate your account.",
+                )
+                return render(
+                    request, "users/signup_link_email.html", {"active_code": 0}
+                )
         else:
-            return HttpResponse("Activation link is invalid!")
+            return render(request, "users/signup_link_email.html", {"active_code": 2})
     else:
-        return HttpResponse("Activation link is invalid!")
+        return render(request, "users/signup_link_email.html", {"active_code": 3})
 
 
 def login_view(request):
@@ -83,8 +96,7 @@ def login_view(request):
     user = request.user
 
     if user.is_authenticated:
-        # return redirect(reverse("users:home"))
-        return redirect('home_page')
+        return redirect("home_page")
 
     if request.POST:
         form = LoginForm(request.POST)
@@ -94,8 +106,7 @@ def login_view(request):
             user = authenticate(email=email, password=password)
             if user:
                 login(request, user)
-                # return redirect(reverse("users:home"))
-                return redirect('home_page')
+                return redirect("home_page")
 
     else:
         form = LoginForm()
@@ -107,18 +118,18 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    # return redirect(reverse("users:home"))
-    return redirect('home_page')
+    return redirect("home_page")
 
 
-def send_email(user, current_site, email):
-    mail_subject = "Activate your account."
+def send_email(user, current_site, email, email_body, email_subject):
+    mail_subject = email_subject
     message = render_to_string(
-        "users/acc_active_email.html",
+        email_body,
         {
             "user": user,
             "domain": current_site.domain,
             "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+            "time": urlsafe_base64_encode(force_bytes(datetime.datetime.now())),
         },
     )
     to_email = email
@@ -149,13 +160,21 @@ def list_projects(request):
         donations[project.id] = total_raised
 
     project_form = NewProject()
+<<<<<<< HEAD
     context = {"user_projects": user_projects,
                "project_form": project_form,
                "donations": donations,
                "donations_flag": donations_flag,
                }
+=======
+    context = {
+        "categories_list": categories_list,
+        "user_projects": user_projects,
+        "project_form": project_form,
+    }
+>>>>>>> 94fdfba508224b68b363c4cd972ea94e787bb4c7
 
-    return render(request, 'users/projects.html', context=context)
+    return render(request, "users/projects.html", context=context)
 
 
 @register.filter
@@ -168,13 +187,14 @@ def donations_list(request):
     user_donations = Project_donations.objects.filter(user_id=request.user.id)
 
     context = {"user_donations": user_donations}
-    return render(request, 'users/donations.html', context=context)
+    return render(request, "users/donations.html", context=context)
 
 
 def user_profile_update(request):
     form = UpdateUserForm(request.POST, request.FILES, instance=request.user)
     if request.POST:
         if form.is_valid():
+<<<<<<< HEAD
             print("photo from form is :", form.cleaned_data['photo'])
             request.user.photo = form.cleaned_data['photo']
             form.save()
@@ -196,3 +216,74 @@ def user_profile_update(request):
 
 def user_profile(request):
     return render(request, 'users/user_profile.html')
+=======
+            print("photo from form is :", form.cleaned_data["photo"])
+            request.user.photo = form.cleaned_data["photo"]
+            form.save()
+            return redirect(reverse("users:profile"))
+    else:
+        form = UpdateUserForm(
+            initial={
+                "first_name": request.user.first_name,
+                "last_name": request.user.last_name,
+                "phone": request.user.phone,
+                "date_birth": request.user.date_birth,
+                "facebook_link": request.user.facebook_link,
+                "country": request.user.country,
+            }
+        )
+    context = {"form": form}
+    return render(request, "users/user_profile_update.html", context=context)
+
+
+def user_profile(request):
+    return render(request, "users/user_profile.html")
+
+
+def send_delete_email(request):
+    user = request.user
+    current_site = get_current_site(request)
+    email = user.email
+    email_subject = "Delete your account"
+    email_body = "users/acc_del_email.html"
+    send_email(user, current_site, email, email_body, email_subject)
+    return render(request, "users/delete_account_email.html", {"delete_code": -1})
+
+
+def delete_account(request, uidb64, time):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        time_sent = force_text(urlsafe_base64_decode(time))
+        user = Users.objects.get(pk=uid)
+
+    except (TypeError, ValueError, OverflowError):
+        user = None
+    if user is not None:
+        email_sent_at = time_sent
+        date_diffrince = (
+            datetime.datetime.now()
+            - datetime.datetime.strptime(email_sent_at, "%Y-%m-%d %H:%M:%S.%f")
+        ).seconds / 60
+
+        if date_diffrince < 1:
+            user.delete()
+            logout(request)
+            return render(
+                request, "users/delete_account_email.html", {"delete_code": 1}
+            )
+        else:
+            current_site = get_current_site(request)
+            email = user.email
+            send_email(
+                user,
+                current_site,
+                email,
+                "users/acc_del_email.html",
+                "Delete your account.",
+            )
+            return render(
+                request, "users/delete_account_email.html", {"delete_code": 0}
+            )
+    else:
+        return render(request, "users/delete_account_email.html", {"delete_code": 2})
+>>>>>>> 94fdfba508224b68b363c4cd972ea94e787bb4c7

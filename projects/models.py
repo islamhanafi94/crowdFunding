@@ -26,11 +26,8 @@ class Projects(models.Model):
     featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-<<<<<<< HEAD
     current_money = models.IntegerField(default=0)
-=======
 
->>>>>>> 94fdfba508224b68b363c4cd972ea94e787bb4c7
     # cover=models.ImageField(upload_to="projects/images",verbose_name="cover_image" ,null=True)
     def __str__(self):
         return self.title
@@ -116,8 +113,5 @@ class Reports(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-<<<<<<< HEAD
+
         return self.report
-=======
-        return self.report
->>>>>>> 94fdfba508224b68b363c4cd972ea94e787bb4c7

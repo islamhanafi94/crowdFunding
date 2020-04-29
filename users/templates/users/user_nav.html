@@ -11,20 +11,26 @@
                 <a class="nav-link" href="{% url 'users:profile' %}">Profile <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="{% url 'users:projects' %}">Projects <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="{% url 'users:projects' %}">Projects <span
+                        class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="{% url 'users:donations' %}">Donations <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="{% url 'users:donations' %}">Donations <span
+                        class="sr-only">(current)</span></a>
             </li>
 
         </ul>
 
         {%if request.user.is_authenticated%}
-            <a href="{% url 'users:logout' %}" class="btn btn-primary btn-md active" role="button" aria-pressed="true">Log out</a>
+        <h5 style="margin-right: 10px;">Welcome,{{request.user.first_name}}</h5>
+        <img src="{{request.user.photo.url}}" alt="" width="50px" height="50px" style="margin-right: 10px; border-radius: 50%;"/>
+        <a href="{% url 'users:logout' %}" class="btn btn-primary btn-md active" role="button" aria-pressed="true">Log
+            out</a>
         {%else%}
-            <a href="{% url 'users:login' %}" class="btn btn-primary btn-md active" role="button" aria-pressed="true">Log in</a>
+        <a href="{% url 'users:login' %}" class="btn btn-primary btn-md active" role="button" aria-pressed="true">Log
+            in</a>
         {%endif%}
 
-            
+
     </div>
 </nav>

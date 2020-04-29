@@ -14,7 +14,7 @@
 <body>
     {{ project.title }}
     {{ project.details }}
-    
+    {{pics}}
 
     {% if donations_flag %}
         <form action="{% url 'cancel_project' project.id %}" method="post">

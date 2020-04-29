@@ -49,7 +49,7 @@
 
             <div class="row">
               {% if donations_flag|get_item:project.id %}
-                  <form action="{% url 'cancel_project' project.id %}" method="post">
+                  <form action="{% url 'projects:cancel_project' project.id %}" method="post">
                       {% csrf_token %}
                       <input type="submit" class="btn btn-danger" value="cancel">
                   </form>

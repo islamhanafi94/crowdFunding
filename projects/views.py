@@ -53,10 +53,10 @@ def project_page(res, id):
     user_rating_count = Project_rating.objects.filter(
         project_id=id, user_id=user).count()
     if user_rating_count:
-        user_rating = Project_rating.objects.get(
-            project_id=id, user_id=user).rating
+        user_rating = Project_rating.objects.get(project_id=id, user_id=user).rating
     else:
         user_rating = 0
+
     if donations["donation__sum"]:
         if donations["donation__sum"] >= (project.total_target*0.25):
             donations_flag = 0
@@ -93,13 +93,10 @@ def project_rating(res, id, rate):
     if res.method == "POST":
         user = res.user.id
         project = Projects.objects.get(id=id)
-        Project_rating.objects.update_or_create(
-            project_id=id, user_id=user, rating=rate)
-        project_rating = project.project_rating_set.all().aggregate(Avg("rating"))[
-            "rating__avg"]
-        project_rating = Decimal(project_rating).quantize(0, ROUND_HALF_UP)
-        project.update_or_create(rating=project_rating)
-        return render(res, 'projects/test_page.html', {'test': "rated"})
+        Project_rating.objects.update_or_create(project_id=id, user_id=user, defaults={'rating': rate})        
+        project_rating = project.project_rating_set.all().aggregate(Avg("rating"))["rating__avg"]
+        Projects.objects.update_or_create(id=id,defaults={'rating': project_rating})
+        return redirect('project_page', id=id)
 
 
 def search(request):

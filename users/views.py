@@ -63,7 +63,8 @@ def activate(request, uidb64, time):
             email_sent_at = time_sent
             date_diffrince = (
                 datetime.datetime.now()
-                - datetime.datetime.strptime(email_sent_at, "%Y-%m-%d %H:%M:%S.%f")
+                - datetime.datetime.strptime(email_sent_at,
+                                             "%Y-%m-%d %H:%M:%S.%f")
             ).seconds / 60
 
             if date_diffrince < 1:
@@ -160,19 +161,11 @@ def list_projects(request):
         donations[project.id] = total_raised
 
     project_form = NewProject()
-<<<<<<< HEAD
     context = {"user_projects": user_projects,
                "project_form": project_form,
                "donations": donations,
                "donations_flag": donations_flag,
                }
-=======
-    context = {
-        "categories_list": categories_list,
-        "user_projects": user_projects,
-        "project_form": project_form,
-    }
->>>>>>> 94fdfba508224b68b363c4cd972ea94e787bb4c7
 
     return render(request, "users/projects.html", context=context)
 
@@ -194,29 +187,6 @@ def user_profile_update(request):
     form = UpdateUserForm(request.POST, request.FILES, instance=request.user)
     if request.POST:
         if form.is_valid():
-<<<<<<< HEAD
-            print("photo from form is :", form.cleaned_data['photo'])
-            request.user.photo = form.cleaned_data['photo']
-            form.save()
-            return redirect(reverse('users:projects'))
-    else:
-        form = UpdateUserForm(
-            initial={
-                'first_name': request.user.first_name,
-                'last_name': request.user.last_name,
-                'phone': request.user.phone,
-                'date_birth': request.user.date_birth,
-                'facebook_link': request.user.facebook_link,
-                'country': request.user.country
-            }
-        )
-    context = {'form': form}
-    return render(request, 'users/user_profile_update.html', context=context)
-
-
-def user_profile(request):
-    return render(request, 'users/user_profile.html')
-=======
             print("photo from form is :", form.cleaned_data["photo"])
             request.user.photo = form.cleaned_data["photo"]
             form.save()
@@ -286,4 +256,3 @@ def delete_account(request, uidb64, time):
             )
     else:
         return render(request, "users/delete_account_email.html", {"delete_code": 2})
->>>>>>> 94fdfba508224b68b363c4cd972ea94e787bb4c7

@@ -11,7 +11,7 @@ from .models import *
 from django.contrib.auth.models import User
 from decimal import Decimal, ROUND_HALF_UP
 from django.db.models import Q, Avg, Sum
-from .forms import NewProject, ImageForm, Report
+from .forms import NewProject, ImageForm, Report, Donate
 from django.forms import modelformset_factory
 from django.contrib import messages
 
@@ -95,6 +95,7 @@ def project_page(res, id):
                'donations': project_donation,
                'comments': comments,
                'report_form': Report(),
+               'donation_form': Donate(),
                }
 
     return render(res, 'projects/project_page.html', context)
@@ -213,12 +214,14 @@ def get_item(dictionary, key):
 
 def donate(request, project_id):
     if request.method == 'POST':
-        donate = Project_donations.objects.create(
-            donation=request.POST['donate'],
-            project_id=project_id,
-            user_id=request.user.id
-        )
-        return redirect(f'/projects/{project_id}')
+        donate_form = Donate(request.POST)
+        if donate_form.is_valid():
+            new_donation = donate_form.save(commit=False)
+            new_donation.user = request.user
+            new_donation.project = Projects.objects.get(id=project_id)
+            new_donation.save()
+    
+    return redirect(reverse("projects:project_page", args=[project_id]) )
 
 
 def comment(request, project_id):
@@ -264,4 +267,6 @@ def report(request, project_id):
     else:
         report_form = Report()
     context['report_form'] = report_form
-    return render(request, reverse("project:project_page"), context)
+    context['donation_form'] = Donate()
+
+    return render(request, reverse("projects:project_page", args=[project_id]) , context)

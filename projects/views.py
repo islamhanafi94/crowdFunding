@@ -47,7 +47,7 @@ def home(request):
         project_pics = Project_pics.objects.filter(project=p.id)
         project_pics2[p.id] = project_pics[0]
 
-    featuredList = Projects.objects.all().filter(featured='True')[:5]
+    featuredList = Projects.objects.all().filter(featured='True').extra(order_by=['-created_at'])[:5]
     for p in featuredList:
         project_pics = Project_pics.objects.filter(project=p.id)
         project_pics2[p.id] = project_pics[0]
@@ -88,6 +88,14 @@ def project_page(res, id):
         donations_flag = 1
         project_donation = 0
 
+    tags = Project_tags.objects.filter(project_id=id)
+    projects = []
+    for tag in tags:
+        p = Project_tags.objects.filter(tag_id=tag.tag_id).exclude(project_id = id)
+        if p :
+            projects.append(p)
+    print(projects)
+
     context = {'project': project,
                'donations_flag': donations_flag,
                'user_rate': user_rating,
@@ -96,6 +104,7 @@ def project_page(res, id):
                'comments': comments,
                'report_form': Report(),
                'donation_form': Donate(),
+               'related_projects': projects[:5]
                }
 
     return render(res, 'projects/project_page.html', context)

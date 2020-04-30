@@ -246,6 +246,24 @@
   <br>
   <hr>
   {%endfor%}
+  <!-- show related projects -->
+  <h3>Related Projects</h3>
+  {% for related_project in related_projects %}
+  <div class="card">
+    <div class="card-header">
+      {{related_project.0.project.title}}
+    </div>
+    <div class="card-body">
+      {{related_project.0.project.details}}
+      <form action="{% url 'projects:project_page' related_project.0.project.id %}" method="post">
+        {% csrf_token %}
+        <input type="submit" value="view project" class="btn btn-primary">
+      </form>
+    </div>
+
+  </div>
+  <br>
+  {%endfor%}
 </div>
 {% else %}
 

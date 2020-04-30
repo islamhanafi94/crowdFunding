@@ -2,7 +2,7 @@
 from django import forms
 from django.forms import Select
 
-from .models import Projects, Project_pics, Categories
+from .models import Projects, Project_pics, Reports
 
 
 class NewProject(forms.ModelForm):
@@ -19,6 +19,12 @@ class NewProject(forms.ModelForm):
         model = Projects
         fields = ('title', 'details', 'category',
                   'total_target', 'end_date')
+
+
+class Report(forms.ModelForm):
+    class Meta:
+        model = Reports
+        fields = ('report',)
 
 
 class ImageForm(forms.ModelForm):

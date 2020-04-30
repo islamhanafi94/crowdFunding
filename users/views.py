@@ -13,7 +13,7 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from users.models import Users
 import datetime
-from projects.models import Categories, Projects, Project_donations
+from projects.models import Categories, Projects, Project_donations, Tags
 from projects.forms import NewProject
 from django.db.models import Q, Avg, Sum
 from django.template.defaulttags import register
@@ -142,6 +142,7 @@ def list_projects(request):
     # get all categories
     # categories_list = Categories.objects.all()
     # get users's projects
+    tags = Tags.objects.all()
     user_projects = Projects.objects.filter(user_id=request.user.id)
 
     donations_flag = {}
@@ -165,6 +166,7 @@ def list_projects(request):
                "project_form": project_form,
                "donations": donations,
                "donations_flag": donations_flag,
+               "tags": tags,
                }
 
     return render(request, "users/projects.html", context=context)

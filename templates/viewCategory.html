@@ -1,6 +1,31 @@
 {% extends "base_generic.html" %}
 {% block content %}
+<style>
+/* The alert message box */
+.alert {
+  padding: 20px;
+  background-color: #f44336; /* Red */
+  color: white;
+  margin-bottom: 15px;
+}
 
+/* The close button */
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+  color: black;
+}
+</style>
 {% load static %}
 
 
@@ -18,20 +43,38 @@
 
 
     <title>Categories_Projects</title>
+    <style>
+    
+    h1 {
+    margin: 1em 0 0.5em 0;
+	color: #343434;
+	font-weight: normal;
+	font-family: 'Ultra', sans-serif;   
+	font-size: 36px;
+	line-height: 42px;
+	text-transform: uppercase;
+	text-shadow: 0 2px white, 0 3px #777;
+}
+</style>
   </head>
   <body>
+{% if request.user.is_authenticated %}
+
     <div class="container">
-        <h1>{{category_name}}</h1>
+
+        <h1>{{category_name}}
+        </h1>
         <div class="row">
         {% for project in category_projects %}
           <div class="col-sm-4 mt-5">
             <div class="card" style="width: 18rem;">
-            <a href= "{% url 'projects:project_page' project.id %}">  <img src="/media/projects/images/managment.jpg" class="card-img-top" style="width:100%; height:100px;"></a>
+            <a href= "{% url 'projects:project_page' project.id %}"> 
+             <img src="/media/{{pics|get_item:project.id}}" class="card-img-top" style="width:100%; height:100px;"></a>
               <div class="card-body">
                 <h5 class="card-title">{{project.title}}</h5>
                 <p class="card-text">{{project.details}}</p>
    <div style="width:auto" class="stars">
-        <h3 class="card-title"> Project Rate {{ project.rating }} </h3>
+        <h3 class="card-title"> Project Rate : {{ project.rating }} </h3>
         {% for i in '01234'|make_list %}
             {% if project.rating >= forloop.counter %}
                 <span class="fa fa-star checked"></span>
@@ -49,6 +92,14 @@
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   </body>
+{%else%}
+        <div class="alert">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        You are not Authnticated
+        </div> 
+{%endif%}
+
+
 </html>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"> 

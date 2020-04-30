@@ -46,6 +46,11 @@ class Project_tags(models.Model):
         'Projects', null=True, on_delete=models.CASCADE)
     tag = models.ForeignKey('Tags', null=True, on_delete=models.CASCADE)
 
+    class Meta:
+        verbose_name = "Project Tag"
+        verbose_name_plural = "Project Tags"
+        unique_together = ('tag', 'project')
+
     def __str__(self):
         return self.Tags.name
 
@@ -54,6 +59,11 @@ def get_image_name(instance, filename):
     title = instance.project.title
     slug = slugify(title)
     return "projects/images/%s-%s" % (slug, filename)
+
+
+@property
+def images(self):
+    return Project_pics.objects.filter(project_id=self.id)
 
 
 class Project_pics(models.Model):

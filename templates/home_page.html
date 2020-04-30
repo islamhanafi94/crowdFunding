@@ -100,15 +100,16 @@ hr {
     max-height: 60px;
     overflow: hidden;
     text-overflow: ellipsis;
+    
 }
 </style>
     <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
     {% if highRatedProjects %}
             <div class="carousel-inner" >
         {% for p in highRatedProjects %}
-            {% if forloop.counter == 1 %}
+          {% if forloop.counter == 1 %}
                 <div class="carousel-item slideCss active" >
-                      <img src="/media/projects/images/managment.jpg" class="d-block slideCss">
+                     <a href="project/{{p.id}}"> <img src="/media/{{pics|get_item:p.id }}" class="d-block slideCss"></a>
                       <div class="carousel-caption d-none d-md-block">
                         <h5 class="sliderTitle" >{{p.title}}  </h5>
                         <h5 class="sliderTitle" >{{p.total_target}}  </h5>
@@ -116,19 +117,21 @@ hr {
                         
                       </div>
                 </div>
-             {% else %}
+                {% else %}
                 <div class="carousel-item slideCss" >
-                      <img src="/media/projects/images/ل.jpg" class="d-block slideCss">
+                    <a href ="project/{{p.id}}">  <img src="/media/{{pics|get_item:p.id}}" class="d-block slideCss">
                       </a>
                       <div class="carousel-caption d-none d-md-block">
                     
                         <h5 class="sliderTitle">{{p.title}} </h5>
+                        <h5 class="sliderTitle" >{{p.total_target}}  </h5>
                         <p class="sliderDesc"> {{p.details}} </p>
                     
                       </div>
                 </div>
-            {% endif %}
-        {% endfor %}
+                {% endif %}
+              {% endfor %}
+
          {%else%}
                 {% if 'search' not in request.path %}
                  <div class="col-md-12">highest five not available</div>
@@ -160,9 +163,7 @@ hr {
           {% for project in projects_search %}
             <div class="col-md-6 col-lg-4 mb-4">
               <div class="card">
-          {% for picture in picture %}
-                  <img class="card-img-top" src="{{ picture }}" alt="image not available">
-          {% endfor %}
+                  <img class="card-img-top" src=" /media/{{pics|get_item:project.id}} " alt="image not available">
 
                 <div>
                   <h2>
@@ -187,7 +188,7 @@ hr {
                     </div>
                   </div>
                   <hr>
-                  <a href="" class="btn btn-primary btn-block">More
+                  <a href="project/{{project.id}}" class="btn btn-primary btn-block">More
                     Info</a>
                 </div>
               </div>
@@ -219,30 +220,38 @@ hr {
         {% if forloop.counter  != 2 and forloop.counter  <= 3 %}
             <div class="col-md-3 latestproject">
                 <div class="card cardDes">
-                 <a href= "project/{{p.id}}">      <img src="https://eitrawmaterials.eu/wp-content/uploads/2019/10/shutterstock_773293384-3.jpg" class="card-img-top projImg"> </a>
+                 <a href= "project/{{p.id}}">   
+                    <img src="/media/{{pics|get_item:p.id}}" class="card-img-top projImg"> </a>
                     <div class="card-body">
                       <h5 class="card-title">{{ p.title }}</h5>
                       <p class="card-text desc">{{p.details }}</p>
+                      <p class="card-text">${{p.total_target }}</p>
                     </div>
                 </div>
             </div>
         {% elif forloop.counter == 2 %}
             <div class="col-md-6 latestproject">
                 <div class="card cardDes">
-                  <a href= "project/{{p.id}}">  <img src="https://dficlub.org/wp-content/uploads/2019/09/dcfdsdf.jpg" class="card-img-top projImg"> </a>
+                  <a href= "project/{{p.id}}">
+                  <img src="/media/{{pics|get_item:p.id}}" class="card-img-top projImg"> </a>
                     <div class="card-body"> 
                       <h5 class="card-title">{{p.title }}</h5>
                       <p class="card-text desc">{{p.details }}</p>
+                      <p class="card-text">${{p.total_target }}</p>
+
                     </div>
                 </div>
             </div>
             {% elif forloop.counter > 3 %}
             <div class="col-md-6 latestproject">
                 <div class="card cardDes">
-                     <a href= "project/{{p.id}}">  <img src="https://dficlub.org/wp-content/uploads/2019/09/dcfdsdf.jpg" class="card-img-top projImg"> </a>
+                     <a href= "project/{{p.id}}"> 
+                      <img src="/media/{{pics|get_item:p.id}}" class="card-img-top projImg"> </a>
                     <div class="card-body">
                       <h5 class="card-title">{{p.title }}</h5>
                       <p class="card-text desc">{{p.details }}</p>
+                      <p class="card-text">${{p.total_target }}</p>
+
                     </div>
                 </div>
             </div>
@@ -266,10 +275,12 @@ hr {
         {% for fproject in featuredList %}
             <div class="fproject">
                 <div class="card cardDes">
-                    <a href= "project/{{fproject.id}}">   <img src="https://individuals.voya.com/sites/default/files/media/image/product-banner_fixed_income.png" class="card-img-top projImg"> </a>
+                    <a href= "project/{{fproject.id}}"> 
+                    <img src="/media/{{pics|get_item:fproject.id}}" class="card-img-top projImg"> </a>
                     <div class="card-body">
                       <h5 class="card-title">{{fproject.title }}</h5>
                       <p class="card-text desc">{{fproject.details }}</p>
+                      <p class="card-text desc">${{fproject.total_target }}</p>
                     </div>
                 </div>
             </div>
@@ -277,10 +288,8 @@ hr {
     </div>  
 {%endif%}
 {% if 'search' not in request.path %}
-
        <h1 class="subTitle"> Our Categories </h1> 
     <hr>
-
     <div class="row">
         {% for c in categories %}
             <div class="categs">
@@ -290,8 +299,5 @@ hr {
         {% endfor %}
     </div>
 {%endif%}
-
-
- 
        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}

@@ -1,6 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http.response import HttpResponse, JsonResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.urls import reverse
+from django.core.exceptions import *
+from django.core.exceptions import ObjectDoesNotExist
+
+from django.template.defaulttags import register
 
 from users.models import Users
 from .models import *
@@ -18,25 +22,43 @@ from django.contrib import messages
 # http://127.0.0.1:8000/project/home
 # I Want to make this render the tamplate that in the root
 def home(request):
+
     projectRates = Project_rating.objects.all().values('project').annotate(
         Avg('rating')).order_by('-rating__avg')[:5]
     print(projectRates)
 
     highRatedProjects = []
+    project_pics2 = {}
     for p in projectRates:
-        print(p.get('project'))
+
+        # project_pics = p.p_pics_set.all()
+        print("id ?? ", p.get('project'))
         highRatedProjects.extend(
             list(Projects.objects.filter(id=p.get('project'))))
         print(highRatedProjects)
+        project_pics = Project_pics.objects.filter(project=p.get('project'))
+        project_pics2[p.get('project')] = project_pics[0]
+        print("project_pics2")
+
+        print(project_pics2)
 
     latestFiveList = Projects.objects.extra(order_by=['-created_at'])[:5]
+    for p in latestFiveList:
+        project_pics = Project_pics.objects.filter(project=p.id)
+        project_pics2[p.id] = project_pics[0]
+
     featuredList = Projects.objects.all().filter(featured='True')[:5]
+    for p in featuredList:
+        project_pics = Project_pics.objects.filter(project=p.id)
+        project_pics2[p.id] = project_pics[0]
     categories = Categories.objects.all()
     context = {
         'latestFiveList': latestFiveList,
         'featuredList': featuredList,
         'highRatedProjects': highRatedProjects,
         'categories': categories,
+        'pics': project_pics2
+
     }
     return render(request, 'home_page.html', context)
 
@@ -46,11 +68,13 @@ def project_page(res, id):
     project = Projects.objects.get(id=id)
     user = res.user.id
     donations = project.project_donations_set.all().aggregate(Sum("donation"))
-    user_rating_count = Project_rating.objects.filter(project_id=id, user_id=user).count()
+    user_rating_count = Project_rating.objects.filter(
+        project_id=id, user_id=user).count()
     project_pics = project.project_pics_set.all()
     comments = Project_comments.objects.filter(project_id=id)
     if user_rating_count:
-        user_rating = Project_rating.objects.get(project_id=id, user_id=user).rating
+        user_rating = Project_rating.objects.get(
+            project_id=id, user_id=user).rating
     else:
         user_rating = 0
 
@@ -63,7 +87,7 @@ def project_page(res, id):
     else:
         donations_flag = 1
         project_donation = 0
-        
+
     context = {'project': project,
                'donations_flag': donations_flag,
                'user_rate': user_rating,
@@ -87,34 +111,47 @@ def cancel_project(res, id):
         return redirect(reverse('users:projects'))
 
 # http://127.0.0.1:8000/project/:id/rating/:rate
+
+
 def project_rating(res, id, rate):
     if res.method == "POST":
         user = res.user.id
         project = Projects.objects.get(id=id)
-        Project_rating.objects.update_or_create(project_id=id, user_id=user, defaults={'rating': rate})        
-        project_rating = project.project_rating_set.all().aggregate(Avg("rating"))["rating__avg"]
-        Projects.objects.update_or_create(id=id,defaults={'rating': project_rating})
+        Project_rating.objects.update_or_create(
+            project_id=id, user_id=user, defaults={'rating': rate})
+        project_rating = project.project_rating_set.all().aggregate(Avg("rating"))[
+            "rating__avg"]
+        Projects.objects.update_or_create(
+            id=id, defaults={'rating': project_rating})
         return redirect('project_page', id=id)
-
 
 
 def search(request):
     if request.GET.get("search"):
+        project_pics2 = {}
+
         res = []
         search_keyword = request.GET.get("search")
-        search_tag_counter = Tags.objects.filter(name=search_keyword).count()
+        search_tag_counter = Tags.objects.filter(
+            Q(name__icontains=search_keyword)).count()
         if search_tag_counter:
-            search_tag = Tags.objects.get(name=search_keyword)
-            search_set = Project_tags.objects.filter(tag_id=search_tag.id)
+            search_set = Project_tags.objects.filter(tag__name__icontains=search_keyword)
+
             for project in search_set:
                 res.append(Projects.objects.get(id=project.project_id))
+
         elif search_tag_counter == 0:
-            res = Projects.objects.filter(title=search_keyword)
+            res = Projects.objects.filter(Q(title__icontains=search_keyword))
+
         else:
             res = ["No res"]
-            
+
+        for p in res:
+            project_pics = Project_pics.objects.filter(project=p.id)
+            project_pics2[p.id] = project_pics[0]
         context = {
-            "projects_search": res
+            "projects_search": res,
+            'pics': project_pics2,
         }
         return render(request, 'home_page.html', context)
     else:
@@ -124,9 +161,19 @@ def search(request):
 def showCategoryProjects(request, cat_id):
     c = get_object_or_404(Categories, pk=cat_id)
     category_projects = c.projects_set.all()
+    project_pics2 = {}
+
+    print("category_projects", category_projects)
+
+    for p in category_projects:
+        print("P::", p)
+        project_pics = Project_pics.objects.filter(project=p.id)
+        project_pics2[p.id] = project_pics[0]
     context = {
         'category_name': c.title,
-        'category_projects': category_projects
+        'c': c,
+        'category_projects': category_projects,
+        'pics':  project_pics2
     }
     return render(request, "viewCategory.html", context)
 
@@ -159,6 +206,11 @@ def create_project(request):
     return render(request, reverse("users:projects"), {'project_form': project_form, })
 
 
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
+
+
 def donate(request, project_id):
     if request.method == 'POST':
         donate = Project_donations.objects.create(
@@ -185,7 +237,8 @@ def comment(request, project_id):
             else:
                 return redirect(f"/project/{project_id}")
         except:
-            messages.error(request, 'Please login first!!!', extra_tags='comment')
+            messages.error(request, 'Please login first!!!',
+                           extra_tags='comment')
             return redirect(f"/project/{project_id}")
     else:
         return redirect(f"/project/{project_id}")
@@ -199,9 +252,11 @@ def report(request, project_id):
             new_report = report_form.save(commit=False)
             new_report.user = request.user
             if 'comment' not in request.POST:
-                new_report.project = Projects.objects.get(pk=request.POST['project'])
+                new_report.project = Projects.objects.get(
+                    pk=request.POST['project'])
             else:
-                new_report.Comment = Project_comments.objects.get(pk=request.POST['comment'])
+                new_report.Comment = Project_comments.objects.get(
+                    pk=request.POST['comment'])
             new_report.save()
             return HttpResponseRedirect(reverse("projects:project_page", args=[project_id]))
         else:

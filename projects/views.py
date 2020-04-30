@@ -131,7 +131,8 @@ def search(request):
             for project in search_set:
                 res.append(Projects.objects.get(id=project.project_id))
         elif search_tag_counter == 0:
-            res = Projects.objects.filter(title=search_keyword)
+            res =Projects.objects.filter(Q(title__icontains = search_keyword))
+
         else:
             res = ["No res"]
             

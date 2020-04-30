@@ -6,27 +6,29 @@
 
 {% block content %}
 <div class="container-fluid">
-<div class="row">
+  <div class="row">
     {% comment %} {% include "users/partials/side_bar.html" with categories_list=categories_list%} {% endcomment %}
 
-  <main role="main" class="col-md-12 ml-sm-auto col-lg-12 pt-3 px-4">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-      <h1 class="h2">My Projects</h1>
-      <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group mr-2" role="group" aria-label="First group">
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">New campaign</button>
+    <main role="main" class="col-md-12 ml-sm-auto col-lg-12 pt-3 px-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">My Projects</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <div class="btn-group mr-2" role="group" aria-label="First group">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">New
+              campaign
+            </button>
+          </div>
+          <div class="btn-group mr-2" role="group" aria-label="Second group">
+            <button class="btn btn-md btn-primary">Browse Projects</button>
+          </div>
+
         </div>
-      <div class="btn-group mr-2" role="group" aria-label="Second group">
-          <button class="btn btn-md btn-primary">Browse Projects</button>
       </div>
-        
-      </div>
-    </div>
-    
-    <div class="table-responsive">
-    <table class="table table-striped ">
-        <thead>
-        <tr>
+
+      <div class="table-responsive">
+        <table class="table table-striped ">
+          <thead>
+          <tr>
             <th scope="col">#</th>
             <th scope="col">Project title</th>
             <th scope="col">Category</th>
@@ -34,11 +36,11 @@
             <th scope="col">Target</th>
             <th scope="col">End Date</th>
             <th scope="col">Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for project in user_projects %}
-        <tr>
+          </tr>
+          </thead>
+          <tbody>
+          {% for project in user_projects %}
+          <tr>
             <td scope="row">{{project.id}}</td>
             <td scope="row">{{project.title}}</td>
             <td scope="row">{{project.category}}</td>
@@ -47,40 +49,42 @@
             <td scope="row">{{project.end_date}}</td>
             <td scope="row">
 
-            <div class="row">
-              {% if donations_flag|get_item:project.id %}
-                  <form action="{% url 'projects:cancel_project' project.id %}" method="post">
-                      {% csrf_token %}
-                      <input type="submit" class="btn btn-danger" value="cancel">
-                  </form>
-              {% endif %}
-              <a href="{% url 'projects:project_page' project.id %}" class="btn btn-info" role="button" aria-disabled="true">View</a>
-            </div>
+              <div class="row">
+                {% if donations_flag|get_item:project.id %}
+                <form action="{% url 'projects:cancel_project' project.id %}" method="post">
+                  {% csrf_token %}
+                  <input type="submit" class="btn btn-danger" value="cancel">
+                </form>
+                {% endif %}
+                <a href="{% url 'projects:project_page' project.id %}" class="btn btn-info" role="button"
+                   aria-disabled="true">View</a>
+              </div>
 
             </td>
-        </tr>
-        {% empty %}
-        <tr>
+          </tr>
+          {% empty %}
+          <tr>
             <td colspan="7">No Projects</td>
-        </tr>
+          </tr>
 
-        {% endfor %}
-        </tbody>
-    </table>
-    </div>
-</main>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </main>
 
 
-</div>
+  </div>
 
 </div>
 
 <!-- Large modal -->
-<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+     aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Create Project</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -91,13 +95,27 @@
 
           {% bootstrap_form project_form %}
 
-          <input type="file" name="images" multiple>
+          <label class="form-check-label" for="tag-div">Tags</label>
+          <div id="tag-div">
+            {% for tag in tags %}
+            <div class="form-check">
+              <input type="checkbox" name="tags" class="form-check-input" id="exampleCheck_{{tag}}" value="{{tag.id}}">
+              <label class="form-check-label" for="exampleCheck_{{tag}}">{{tag}}</label>
+            </div>
+            {% endfor %}
+            <br>
+            <input type="text" name="new_tag" class="form-control"
+                   placeholder="Enter your custom tags and divide them using ':'">
+          </div>
+          <br>
+          <label class="form-check-label" for="images"> Images </label>
+          <input type="file" id="images" class="form-control-file" name="images" multiple>
 
           <div class="modal-footer">
             {% buttons %}
-              <button type="submit" class="btn btn-primary">
-                Submit
-              </button>
+            <button type="submit" class="btn btn-primary">
+              Submit
+            </button>
             {% endbuttons %}
           </div>
 
@@ -106,7 +124,6 @@
     </div>
   </div>
 </div>
-
 
 
 {% endblock content %}

@@ -7,7 +7,7 @@ from .models import *
 from django.contrib.auth.models import User
 from decimal import Decimal, ROUND_HALF_UP
 from django.db.models import Q, Avg, Sum
-from .forms import NewProject, ImageForm
+from .forms import NewProject, ImageForm, Report
 from django.forms import modelformset_factory
 from django.contrib import messages
 
@@ -69,7 +69,8 @@ def project_page(res, id):
                'user_rate': user_rating,
                'pics': project_pics,
                'donations': project_donation,
-               'comments': comments
+               'comments': comments,
+               'report_form': Report(),
                }
 
     return render(res, 'projects/project_page.html', context)
@@ -134,11 +135,22 @@ def create_project(request):
     if request.method == 'POST':
         project_form = NewProject(request.POST)
         if project_form.is_valid():
+            tags = request.POST.getlist('tags')
             form = project_form.save(commit=False)
             form.user = request.user
             form.save()
             for file in request.FILES.getlist('images'):
-                project_pic = Project_pics(project_id=form.id, pic=file).save()
+                Project_pics(project_id=form.id, pic=file).save()
+
+            if request.POST['new_tag']:
+                new_tags = request.POST['new_tag'].split(':')
+                for new_tag in new_tags:
+                    tag = Tags(name=new_tag)
+                    tag.save()
+                    tags.append(tag.id)
+                print(tags)
+            for tag_id in tags:
+                Project_tags(project_id=form.id, tag_id=tag_id).save()
             return HttpResponseRedirect(reverse("users:projects"))
         else:
             print(project_form.errors)
@@ -236,3 +248,23 @@ def comment(request, project_id):
     else:
         return redirect(f"/project/{project_id}")
 
+
+def report(request, project_id):
+    context = {}
+    if request.method == 'POST':
+        report_form = Report(request.POST)
+        if report_form.is_valid():
+            new_report = report_form.save(commit=False)
+            new_report.user = request.user
+            if 'comment' not in request.POST:
+                new_report.project = Projects.objects.get(pk=request.POST['project'])
+            else:
+                new_report.Comment = Project_comments.objects.get(pk=request.POST['comment'])
+            new_report.save()
+            return HttpResponseRedirect(reverse("projects:project_page", args=[project_id]))
+        else:
+            print(report_form.errors)
+    else:
+        report_form = Report()
+    context['report_form'] = report_form
+    return render(request, reverse("project:project_page"), context)

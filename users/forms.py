@@ -11,16 +11,12 @@ class RegistraionForm(UserCreationForm):
         fields = ('email','first_name','last_name','phone','photo','password1','password2')
 
 
-
-
-
 class LoginForm(forms.ModelForm):
     password = forms.CharField(label='password',widget=forms.PasswordInput)
 
     class Meta:
         model = Users
         fields = ('email','password')
-
 
     def clean(self):
         if self.is_valid():

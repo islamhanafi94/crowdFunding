@@ -162,7 +162,7 @@ hr {
         {% if projects_search %}
           {% for project in projects_search %}
             <div class="col-md-6 col-lg-4 mb-4">
-              <div class="card">
+              <div class="card" >
                   <img class="card-img-top" src=" /media/{{pics|get_item:project.id}} " alt="image not available">
 
                 <div>
@@ -230,7 +230,7 @@ hr {
                 </div>
             </div>
         {% elif forloop.counter == 2 %}
-            <div class="col-md-6 latestproject">
+            <div class="col-md-3 latestproject">
                 <div class="card cardDes">
                   <a href= "project/{{p.id}}">
                   <img src="/media/{{pics|get_item:p.id}}" class="card-img-top projImg"> </a>
@@ -243,7 +243,7 @@ hr {
                 </div>
             </div>
             {% elif forloop.counter > 3 %}
-            <div class="col-md-6 latestproject">
+            <div class="col-md-3 latestproject">
                 <div class="card cardDes">
                      <a href= "project/{{p.id}}"> 
                       <img src="/media/{{pics|get_item:p.id}}" class="card-img-top projImg"> </a>
@@ -276,7 +276,7 @@ hr {
             <div class="fproject">
                 <div class="card cardDes">
                     <a href= "project/{{fproject.id}}"> 
-                    <img src="/media/{{pics|get_item:fproject.id}}" class="card-img-top projImg"> </a>
+                    <img src="/media/{{pics|get_item:fproject.id}}" style ="width:170px ,height:230px " class="card-img-top projImg"> </a>
                     <div class="card-body">
                       <h5 class="card-title">{{fproject.title }}</h5>
                       <p class="card-text desc">{{fproject.details }}</p>

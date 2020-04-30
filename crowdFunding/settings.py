@@ -33,9 +33,6 @@ AUTH_USER_MODEL = 'users.Users'
 # Application definition
 
 INSTALLED_APPS = [
-    'users',
-    'projects',
-    'bootstrap4',
     'django_extensions',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -43,6 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'users',
+    'projects',
+    'bootstrap4',
 ]
 
 MIDDLEWARE = [

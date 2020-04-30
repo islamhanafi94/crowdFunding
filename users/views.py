@@ -139,6 +139,8 @@ def send_email(user, current_site, email, email_body, email_subject):
 
 
 def list_projects(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse("users:login"))
     # get all categories
     # categories_list = Categories.objects.all()
     # get users's projects
@@ -178,6 +180,8 @@ def get_item(dictionary, key):
 
 
 def donations_list(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse("users:login"))
 
     user_donations = Project_donations.objects.filter(user_id=request.user.id)
 
@@ -209,6 +213,8 @@ def user_profile_update(request):
 
 
 def user_profile(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse("users:login"))
     return render(request, "users/user_profile.html")
 
 

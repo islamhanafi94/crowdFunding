@@ -246,6 +246,20 @@
   <br>
   <hr>
   {%endfor%}
+  <!-- show related projects -->
+  {{related_projects}}
+  {% for related_project in related_projects %}
+  <div class="card">
+    <div class="card-title">
+      {{related_project.project_id}}
+    </div>
+    <div class="card-text">
+      {{related_project.project.details}}
+    </div>
+
+  </div>
+  <br>
+  {%endfor%}
 </div>
 {% else %}
 

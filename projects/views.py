@@ -88,6 +88,12 @@ def project_page(res, id):
         donations_flag = 1
         project_donation = 0
 
+    tags = Project_tags.objects.filter(project_id=id)
+    projects = []
+    for tag in tags:
+        projects.append(Project_tags.objects.get(tag_id=tag.tag_id, project_id != id))
+    print(projects)
+
     context = {'project': project,
                'donations_flag': donations_flag,
                'user_rate': user_rating,
@@ -96,6 +102,7 @@ def project_page(res, id):
                'comments': comments,
                'report_form': Report(),
                'donation_form': Donate(),
+               'related_projects': projects
                }
 
     return render(res, 'projects/project_page.html', context)

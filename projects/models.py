@@ -56,8 +56,8 @@ class Project_tags(models.Model):
         verbose_name_plural = "Project Tags"
         unique_together = ('tag', 'project')
 
-    def __str__(self):
-        return self.Tags.name
+    # def __str__(self):
+    #     return self.Tags.name
 
 
 def get_image_name(instance, filename):

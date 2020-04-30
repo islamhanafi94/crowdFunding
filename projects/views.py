@@ -161,27 +161,12 @@ def create_project(request):
 
 def donate(request, project_id):
     if request.method == 'POST':
-        try:
-            donating_value = int(request.POST.get('donation_value'))
-            project = Projects.objects.get(id=project_id)
-            project.current_money += donating_value
-            if project.current_money <= project.target:
-                project.save()
-                Project_donations.objects.create(
-                    project=project,
-                    user=Users.objects.get(user_id=request.session['logged_in_user']),
-                    value=donating_value
-                )
-                messages.success(request, 'Your Donation done successfully!', extra_tags='donate')
-                return redirect(f"/project/{project_id}")
-            else:
-                messages.error(request, 'Your Donation failed', extra_tags='donate')
-                return redirect(f"/project/{project_id}")
-        except:
-            messages.error(request, 'Please login first!!!', extra_tags='donate')
-            return redirect(f"/project/{project_id}")
-    else:
-        return redirect(f"/project/{project_id}")
+        donate = Project_donations.objects.create(
+            donation=request.POST['donate'],
+            project_id=project_id,
+            user_id=request.user.id
+        )
+        return redirect(f'/projects/{project_id}')
 
 
 def comment(request, project_id):

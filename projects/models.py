@@ -33,6 +33,7 @@ class Projects(models.Model):
     def __str__(self):
         return self.title
 
+   
 
 class Tags(models.Model):
     name = models.CharField(max_length=50)
@@ -54,6 +55,10 @@ def get_image_name(instance, filename):
     title = instance.project.title
     slug = slugify(title)
     return "projects/images/%s-%s" % (slug, filename)
+    
+@property
+def images(self):
+    return Project_pics.objects.filter(project_id = self.id)
 
 
 class Project_pics(models.Model):

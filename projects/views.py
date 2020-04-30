@@ -1,6 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http.response import HttpResponse, JsonResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.urls import reverse
+from django.core.exceptions import *
+from django.core.exceptions import ObjectDoesNotExist
+
+from django.template.defaulttags import register
 
 from users.models import Users
 from .models import *
@@ -18,25 +22,43 @@ from django.contrib import messages
 # http://127.0.0.1:8000/project/home
 # I Want to make this render the tamplate that in the root
 def home(request):
+
     projectRates = Project_rating.objects.all().values('project').annotate(
         Avg('rating')).order_by('-rating__avg')[:5]
     print(projectRates)
 
     highRatedProjects = []
+    project_pics2={}
     for p in projectRates:
-        print(p.get('project'))
+
+        # project_pics = p.p_pics_set.all()
+        print("id ?? " ,p.get('project'))
         highRatedProjects.extend(
             list(Projects.objects.filter(id=p.get('project'))))
         print(highRatedProjects)
+        project_pics =  Project_pics.objects.filter(project =p.get('project'))
+        project_pics2[p.get('project')] = project_pics[0]
+        print("project_pics2")
+
+        print(project_pics2)
 
     latestFiveList = Projects.objects.extra(order_by=['-created_at'])[:5]
+    for p in latestFiveList:
+        project_pics =  Project_pics.objects.filter(project =p.id)
+        project_pics2[p.id] = project_pics[0]
+
     featuredList = Projects.objects.all().filter(featured='True')[:5]
+    for p in featuredList:
+        project_pics =  Project_pics.objects.filter(project =p.id)
+        project_pics2[p.id] = project_pics[0]
     categories = Categories.objects.all()
     context = {
         'latestFiveList': latestFiveList,
         'featuredList': featuredList,
         'highRatedProjects': highRatedProjects,
         'categories': categories,
+        'pics': project_pics2
+
     }
     return render(request, 'home_page.html', context)
 
@@ -118,9 +140,19 @@ def search(request):
 def showCategoryProjects(request, cat_id):
     c = get_object_or_404(Categories, pk=cat_id)
     category_projects = c.projects_set.all()
+    project_pics2={}
+
+    print("category_projects",category_projects)
+
+    for p in category_projects:
+        print("P::",p)
+        project_pics =  Project_pics.objects.filter(project =p.id)
+        project_pics2[p.id] = project_pics[0]
     context = {
         'category_name': c.title,
-        'category_projects': category_projects
+        'c':c,
+        'category_projects': category_projects,
+        'pics':  project_pics2
     }
     return render(request, "viewCategory.html", context)
 
@@ -140,3 +172,9 @@ def create_project(request):
     else:
         project_form = NewProject()
     return render(request, reverse("users:projects"), {'project_form': project_form, })
+
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
+

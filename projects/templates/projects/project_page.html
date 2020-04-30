@@ -63,7 +63,20 @@
                 </form>
             {% endif %}
         {% endif %}
+    <hr>    
+        <form action="{% url 'projects:comment' project.id %}" method="post">
+            {% csrf_token %}
+            <textarea name="comment"></textarea>
+            <input type="submit" value="comment" class="btn btn-danger">
+        </form>    
+    
+    {%for comment in comments %}
+    <img src="{{comment.user.photo.url}}" alt="" width="50px" height="50px" style="border-radius: 50%;">
+    <strong> {{comment.user.first_name}}</strong> : {{comment}}
+    {%endfor%}
     <hr>
+    
+
 <hr>
 
 <div style="width:auto" class="stars">

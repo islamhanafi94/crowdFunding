@@ -48,6 +48,7 @@ def project_page(res, id):
     donations = project.project_donations_set.all().aggregate(Sum("donation"))
     user_rating_count = Project_rating.objects.filter(project_id=id, user_id=user).count()
     project_pics = project.project_pics_set.all()
+    comments = Project_comments.objects.filter(project_id=id)
     if user_rating_count:
         user_rating = Project_rating.objects.get(project_id=id, user_id=user).rating
     else:
@@ -67,7 +68,8 @@ def project_page(res, id):
                'donations_flag': donations_flag,
                'user_rate': user_rating,
                'pics': project_pics,
-               'donations': project_donation
+               'donations': project_donation,
+               'comments': comments
                }
 
     return render(res, 'projects/project_page.html', context)
@@ -143,3 +145,94 @@ def create_project(request):
     else:
         project_form = NewProject()
     return render(request, reverse("users:projects"), {'project_form': project_form, })
+
+
+def project(request, project_id):
+    images = []
+    try:
+        project = Projects.objects.get(id=project_id)
+        pics = Project_pics.objects.filter(project_id=project_id)
+        for i in pics:
+            pics.append(i.pic)
+        project_all_tags = Project_tags.objects.filter(
+            project_id=project_id).values_list("tag", flat=True)
+        test_list = list(project_all_tags)
+        related_projects_id = Project_tags.objects.filter(tag__in=test_list).distinct(
+        ).exclude(project_id=project_id).values_list("project", flat=True)[:5]
+        related_projects_data = Projects.objects.filter(
+            id__in=list(related_projects_id))
+
+        # get project comments
+        comments = Project_comments.objects.filter(project_id=project_id)
+        if 'logged_in_user' in request.session:
+            if request.session['logged_in_user'] == project.user_id:
+                project_owner = True
+            else:
+                project_owner = False
+        else:
+            project_owner = False
+
+        is_ended = True if project.end_date < datetime.date.today() else False
+
+        is_completed = True if project.current_money >= project.target else False
+        context = {
+            "pics": images,
+            "Projects": project,
+            "comments": comments,
+            "related_projects_list": related_projects_data,
+            "owner": project_owner,
+            "is_ended": is_ended,
+            "is_completed": is_completed
+        }
+
+    except Projects.DoesNotExist:
+        return redirect(f'/project/error')
+    return render(request, 'projects/project_page.html', context)
+
+
+def donate(request, project_id):
+    if request.method == 'POST':
+        try:
+            donating_value = int(request.POST.get('donation_value'))
+            project = Projects.objects.get(id=project_id)
+            project.current_money += donating_value
+            if project.current_money <= project.target:
+                project.save()
+                Project_donations.objects.create(
+                    project=project,
+                    user=Users.objects.get(user_id=request.session['logged_in_user']),
+                    value=donating_value
+                )
+                messages.success(request, 'Your Donation done successfully!', extra_tags='donate')
+                return redirect(f"/project/{project_id}")
+            else:
+                messages.error(request, 'Your Donation failed', extra_tags='donate')
+                return redirect(f"/project/{project_id}")
+        except:
+            messages.error(request, 'Please login first!!!', extra_tags='donate')
+            return redirect(f"/project/{project_id}")
+    else:
+        return redirect(f"/project/{project_id}")
+
+
+def comment(request, project_id):
+    if request.method == 'POST':
+        try:
+            project = Projects.objects.get(id=project_id)
+            comment = request.POST.get('comment')
+            print("comment:", comment)
+            if len(comment) > 0:
+                Project_comments.objects.create(
+                    project_id=project_id,
+                    comment=comment,
+                    user_id=request.user.id
+                )
+                return redirect(f"/project/{project_id}")
+            else:
+                return redirect(f"/project/{project_id}")
+        except:
+            messages.error(request, 'Please login first!!!', extra_tags='comment')
+            return redirect(f"/project/{project_id}")
+    else:
+        return redirect(f"/project/{project_id}")
+

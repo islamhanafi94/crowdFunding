@@ -159,49 +159,6 @@ def create_project(request):
     return render(request, reverse("users:projects"), {'project_form': project_form, })
 
 
-def project(request, project_id):
-    images = []
-    try:
-        project = Projects.objects.get(id=project_id)
-        pics = Project_pics.objects.filter(project_id=project_id)
-        for i in pics:
-            pics.append(i.pic)
-        project_all_tags = Project_tags.objects.filter(
-            project_id=project_id).values_list("tag", flat=True)
-        test_list = list(project_all_tags)
-        related_projects_id = Project_tags.objects.filter(tag__in=test_list).distinct(
-        ).exclude(project_id=project_id).values_list("project", flat=True)[:5]
-        related_projects_data = Projects.objects.filter(
-            id__in=list(related_projects_id))
-
-        # get project comments
-        comments = Project_comments.objects.filter(project_id=project_id)
-        if 'logged_in_user' in request.session:
-            if request.session['logged_in_user'] == project.user_id:
-                project_owner = True
-            else:
-                project_owner = False
-        else:
-            project_owner = False
-
-        is_ended = True if project.end_date < datetime.date.today() else False
-
-        is_completed = True if project.current_money >= project.target else False
-        context = {
-            "pics": images,
-            "Projects": project,
-            "comments": comments,
-            "related_projects_list": related_projects_data,
-            "owner": project_owner,
-            "is_ended": is_ended,
-            "is_completed": is_completed
-        }
-
-    except Projects.DoesNotExist:
-        return redirect(f'/project/error')
-    return render(request, 'projects/project_page.html', context)
-
-
 def donate(request, project_id):
     if request.method == 'POST':
         try:

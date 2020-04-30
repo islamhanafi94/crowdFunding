@@ -47,7 +47,7 @@ def home(request):
         project_pics = Project_pics.objects.filter(project=p.id)
         project_pics2[p.id] = project_pics[0]
 
-    featuredList = Projects.objects.all().filter(featured='True')[:5]
+    featuredList = Projects.objects.all().filter(featured='True').extra(order_by=['-created_at'])[:5]
     for p in featuredList:
         project_pics = Project_pics.objects.filter(project=p.id)
         project_pics2[p.id] = project_pics[0]

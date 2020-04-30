@@ -26,7 +26,7 @@ urlpatterns = [
     path('',home,name='home_page'),
     path('user/', include('users.urls')),
     path('project/', include('projects.urls', namespace='projects')),
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls,name='admin'),
     path('search', search, name="search"),
     path('showCategory/<int:cat_id>',showCategoryProjects ,name="show_cate"),
 

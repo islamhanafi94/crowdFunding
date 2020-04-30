@@ -100,6 +100,7 @@ hr {
     max-height: 60px;
     overflow: hidden;
     text-overflow: ellipsis;
+    
 }
 </style>
     <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
@@ -108,7 +109,7 @@ hr {
         {% for p in highRatedProjects %}
           {% if forloop.counter == 1 %}
                 <div class="carousel-item slideCss active" >
-                      <img src="/media/{{pics|get_item:p.id }}" class="d-block slideCss">
+                     <a href="project/{{p.id}}"> <img src="/media/{{pics|get_item:p.id }}" class="d-block slideCss"></a>
                       <div class="carousel-caption d-none d-md-block">
                         <h5 class="sliderTitle" >{{p.title}}  </h5>
                         <h5 class="sliderTitle" >{{p.total_target}}  </h5>
@@ -118,7 +119,7 @@ hr {
                 </div>
                 {% else %}
                 <div class="carousel-item slideCss" >
-                      <img src="/media/{{pics|get_item:p.id}}" class="d-block slideCss">
+                    <a href ="project/{{p.id}}">  <img src="/media/{{pics|get_item:p.id}}" class="d-block slideCss">
                       </a>
                       <div class="carousel-caption d-none d-md-block">
                     
@@ -224,6 +225,7 @@ hr {
                     <div class="card-body">
                       <h5 class="card-title">{{ p.title }}</h5>
                       <p class="card-text desc">{{p.details }}</p>
+                      <p class="card-text">${{p.total_target }}</p>
                     </div>
                 </div>
             </div>
@@ -235,6 +237,8 @@ hr {
                     <div class="card-body"> 
                       <h5 class="card-title">{{p.title }}</h5>
                       <p class="card-text desc">{{p.details }}</p>
+                      <p class="card-text">${{p.total_target }}</p>
+
                     </div>
                 </div>
             </div>
@@ -246,6 +250,8 @@ hr {
                     <div class="card-body">
                       <h5 class="card-title">{{p.title }}</h5>
                       <p class="card-text desc">{{p.details }}</p>
+                      <p class="card-text">${{p.total_target }}</p>
+
                     </div>
                 </div>
             </div>
@@ -274,6 +280,7 @@ hr {
                     <div class="card-body">
                       <h5 class="card-title">{{fproject.title }}</h5>
                       <p class="card-text desc">{{fproject.details }}</p>
+                      <p class="card-text desc">${{fproject.total_target }}</p>
                     </div>
                 </div>
             </div>

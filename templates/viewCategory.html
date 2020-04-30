@@ -18,12 +18,24 @@
 
 
     <title>Categories_Projects</title>
+    <style>
+    
+    h1 {
+    margin: 1em 0 0.5em 0;
+	color: #343434;
+	font-weight: normal;
+	font-family: 'Ultra', sans-serif;   
+	font-size: 36px;
+	line-height: 42px;
+	text-transform: uppercase;
+	text-shadow: 0 2px white, 0 3px #777;
+}
+</style>
   </head>
   <body>
     <div class="container">
 
         <h1>{{category_name}}
-        {{ c }}
         </h1>
         <div class="row">
         {% for project in category_projects %}
@@ -35,7 +47,7 @@
                 <h5 class="card-title">{{project.title}}</h5>
                 <p class="card-text">{{project.details}}</p>
    <div style="width:auto" class="stars">
-        <h3 class="card-title"> Project Rate {{ project.rating }} </h3>
+        <h3 class="card-title"> Project Rate : {{ project.rating }} </h3>
         {% for i in '01234'|make_list %}
             {% if project.rating >= forloop.counter %}
                 <span class="fa fa-star checked"></span>

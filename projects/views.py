@@ -133,17 +133,28 @@ def create_project(request):
     if request.method == 'POST':
         project_form = NewProject(request.POST)
         if project_form.is_valid():
+            tags = request.POST.getlist('tags')
             form = project_form.save(commit=False)
             form.user = request.user
             form.save()
             for file in request.FILES.getlist('images'):
-                project_pic = Project_pics(project_id=form.id, pic=file).save()
+                Project_pics(project_id=form.id, pic=file).save()
+
+            if request.POST['new_tag']:
+                new_tags = request.POST['new_tag'].split(':')
+                for new_tag in new_tags:
+                    tag = Tags(name=new_tag)
+                    tag.save()
+                    tags.append(tag.id)
+                print(tags)
+            for tag_id in tags:
+                Project_tags(project_id=form.id, tag_id=tag_id).save()
             return HttpResponseRedirect(reverse("users:projects"))
         else:
             print(project_form.errors)
     else:
         project_form = NewProject()
-    return render(request, reverse("users:projects"), {'project_form': project_form, })
+    return render(request, reverse("users:projects"), {'project_form': project_form,})
 
 
 def report(request, project_id):
@@ -157,11 +168,6 @@ def report(request, project_id):
                 new_report.project = Projects.objects.get(pk=request.POST['project'])
             else:
                 new_report.Comment = Project_comments.objects.get(pk=request.POST['comment'])
-
-            # if request.POST['comment']:
-            #     new_report.Comment = request.POST['comment']
-            # elif request.POST['project']:
-            #     new_report.project = request.POST['project']
             new_report.save()
             return HttpResponseRedirect(reverse("projects:project_page", args=[project_id]))
         else:

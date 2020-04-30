@@ -3,9 +3,12 @@
 
 {% block title %}project page{% endblock %}
 {% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
 {% block content %}
 
 {% if request.user.is_authenticated %}
+{% load static %}
 <div id="carouselExampleInterval" class="carousel slide" data-ride="carousel">
   <div class="carousel-inner">
     {% for pic in pics %}

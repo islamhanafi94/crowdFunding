@@ -9,7 +9,9 @@ from users.models import Users
 
 class Categories(models.Model):
     title = models.CharField(max_length=50)
-
+    class Meta:
+        verbose_name_plural = 'Categories'
+        
     def __str__(self):
         return self.title
 
@@ -24,10 +26,13 @@ class Projects(models.Model):
     total_target = models.IntegerField()
     start_date = models.DateField(auto_now=True)
     end_date = models.DateField(auto_now=False, auto_now_add=False)
-    rating = models.FloatField(null=True)
+    rating = models.FloatField(null=True, default=0)
     featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name_plural = 'Projects'
 
     # cover=models.ImageField(upload_to="projects/images",verbose_name="cover_image" ,null=True)
     def __str__(self):

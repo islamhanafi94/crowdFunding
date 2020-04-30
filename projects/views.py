@@ -122,6 +122,8 @@ def project_rating(res, id, rate):
 
 def search(request):
     if request.GET.get("search"):
+        project_pics2={}
+
         res = []
         search_keyword = request.GET.get("search")
         search_tag_counter = Tags.objects.filter(name=search_keyword).count()
@@ -130,14 +132,22 @@ def search(request):
             search_set = Project_tags.objects.filter(tag_id=search_tag.id)
             for project in search_set:
                 res.append(Projects.objects.get(id=project.project_id))
+                   
+                   
+      
         elif search_tag_counter == 0:
             res =Projects.objects.filter(Q(title__icontains = search_keyword))
 
         else:
             res = ["No res"]
             
+        
+        for p in res:
+            project_pics =  Project_pics.objects.filter(project =p.id)
+            project_pics2[p.id] = project_pics[0]
         context = {
-            "projects_search": res
+            "projects_search": res,
+            'pics':project_pics2,
         }
         return render(request, 'home_page.html', context)
     else:

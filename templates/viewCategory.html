@@ -1,6 +1,31 @@
 {% extends "base_generic.html" %}
 {% block content %}
+<style>
+/* The alert message box */
+.alert {
+  padding: 20px;
+  background-color: #f44336; /* Red */
+  color: white;
+  margin-bottom: 15px;
+}
 
+/* The close button */
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+  color: black;
+}
+</style>
 {% load static %}
 
 
@@ -33,6 +58,8 @@
 </style>
   </head>
   <body>
+{% if request.user.is_authenticated %}
+
     <div class="container">
 
         <h1>{{category_name}}
@@ -65,6 +92,14 @@
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   </body>
+{%else%}
+        <div class="alert">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        You are not Authnticated
+        </div> 
+{%endif%}
+
+
 </html>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"> 

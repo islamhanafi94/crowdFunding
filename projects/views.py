@@ -202,9 +202,11 @@ def create_project(request):
             return HttpResponseRedirect(reverse("users:projects"))
         else:
             print(project_form.errors)
+            messages.success(request,project_form.errors) 
     else:
         project_form = NewProject()
-    return render(request, reverse("users:projects"), {'project_form': project_form, })
+    # return render(request, reverse("users:projects"), {'project_form': project_form, })
+    return redirect(reverse("users:projects"))
 
 
 @register.filter

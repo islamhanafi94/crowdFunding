@@ -8,8 +8,10 @@ from django.contrib.auth.models import Group
 admin.site.site_header = "Crowd Fund Admin Panel"
 
 class New_Project(admin.ModelAdmin):
-    exclude = ('rating',)
+    exclude = ('rating','user','title','details','category','total_target','end_date')
     def has_add_permission(self, request, obj=None):
+        return False
+    def has_delete_permission(self, request, obj=None):
         return False
 
 

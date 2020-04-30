@@ -7,6 +7,16 @@
 {% block content %}
 <div class="container-fluid">
   <div class="row">
+    <div class="container">
+      {% if messages %}
+      <ul class="messages alert alert-danger">
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+
     {% comment %} {% include "users/partials/side_bar.html" with categories_list=categories_list%} {% endcomment %}
 
     <main role="main" class="col-md-12 ml-sm-auto col-lg-12 pt-3 px-4">
@@ -18,9 +28,7 @@
               campaign
             </button>
           </div>
-          <div class="btn-group mr-2" role="group" aria-label="Second group">
-            <button class="btn btn-md btn-primary">Browse Projects</button>
-          </div>
+
 
         </div>
       </div>
@@ -28,46 +36,46 @@
       <div class="table-responsive">
         <table class="table table-striped ">
           <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Project title</th>
-            <th scope="col">Category</th>
-            <th scope="col">Raised</th>
-            <th scope="col">Target</th>
-            <th scope="col">End Date</th>
-            <th scope="col">Action</th>
-          </tr>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Project title</th>
+              <th scope="col">Category</th>
+              <th scope="col">Raised</th>
+              <th scope="col">Target</th>
+              <th scope="col">End Date</th>
+              <th scope="col">Action</th>
+            </tr>
           </thead>
           <tbody>
-          {% for project in user_projects %}
-          <tr>
-            <td scope="row">{{project.id}}</td>
-            <td scope="row">{{project.title}}</td>
-            <td scope="row">{{project.category}}</td>
-            <td scope="row">{{donations|get_item:project.id}}</td>
-            <td scope="row">{{project.total_target}}</td>
-            <td scope="row">{{project.end_date}}</td>
-            <td scope="row">
+            {% for project in user_projects %}
+            <tr>
+              <td scope="row">{{project.id}}</td>
+              <td scope="row">{{project.title}}</td>
+              <td scope="row">{{project.category}}</td>
+              <td scope="row">{{donations|get_item:project.id}}</td>
+              <td scope="row">{{project.total_target}}</td>
+              <td scope="row">{{project.end_date}}</td>
+              <td scope="row">
 
-              <div class="row">
-                {% if donations_flag|get_item:project.id %}
-                <form action="{% url 'projects:cancel_project' project.id %}" method="post">
-                  {% csrf_token %}
-                  <input type="submit" class="btn btn-danger" value="cancel">
-                </form>
-                {% endif %}
-                <a href="{% url 'projects:project_page' project.id %}" class="btn btn-info" role="button"
-                   aria-disabled="true">View</a>
-              </div>
+                <div class="row">
+                  {% if donations_flag|get_item:project.id %}
+                  <form action="{% url 'projects:cancel_project' project.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" class="btn btn-danger" value="cancel">
+                  </form>
+                  {% endif %}
+                  <a href="{% url 'projects:project_page' project.id %}" class="btn btn-info" role="button"
+                    aria-disabled="true">View</a>
+                </div>
 
-            </td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="7">No Projects</td>
-          </tr>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7">No Projects</td>
+            </tr>
 
-          {% endfor %}
+            {% endfor %}
           </tbody>
         </table>
       </div>
@@ -80,7 +88,7 @@
 
 <!-- Large modal -->
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-     aria-hidden="true">
+  aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -105,7 +113,7 @@
             {% endfor %}
             <br>
             <input type="text" name="new_tag" class="form-control"
-                   placeholder="Enter your custom tags and divide them using ':'">
+              placeholder="Enter your custom tags and divide them using ':'">
           </div>
           <br>
           <label class="form-check-label" for="images"> Images </label>
@@ -127,5 +135,3 @@
 
 
 {% endblock content %}
-
-

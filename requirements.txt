@@ -1,7 +1,7 @@
 asgiref==3.2.7
 beautifulsoup4==4.9.0
 bootstrap4==0.1.0
-Django==3.0.5
+Django==3.0.7
 django-bootstrap4==1.1.1
 django-braces==1.14.0
 django-extensions==2.2.9
